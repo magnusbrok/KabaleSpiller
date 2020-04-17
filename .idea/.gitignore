@@ -1,3 +1,4 @@
+# Default ignored files
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -127,8 +128,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-*.xml
-.idea/vcs.xml
-.idea/vcs.xml
-.idea/modules.xml
-.idea/misc.xml
