@@ -20,23 +20,7 @@ RANK_HEIGHT = 125
 SUIT_WIDTH = 70
 SUIT_HEIGHT = 100
 
-# If using a USB Camera instead of a PiCamera, change PiOrUSB to 2
-PiOrUSB = 2
-
-if PiOrUSB == 1:
-    # Import packages from picamera library
-    from picamera.array import PiRGBArray
-    from picamera import PiCamera
-
-    # Initialize PiCamera and grab reference to the raw capture
-    camera = PiCamera()
-    camera.resolution = (IM_WIDTH,IM_HEIGHT)
-    camera.framerate = 10
-    rawCapture = PiRGBArray(camera, size=(IM_WIDTH,IM_HEIGHT))
-
-if PiOrUSB == 2:
-    # Initialize USB camera
-    cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0)
 
 # Use counter variable to switch from isolating Rank to isolating Suit
 i = 1
@@ -51,29 +35,16 @@ for Name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight',
     
     
 
-    if PiOrUSB == 1: # PiCamera
-        rawCapture.truncate(0)
-        # Press 'p' to take a picture
-        for frame in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
 
-            image = frame.array
-            cv2.imshow("Card",image)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("p"):
-                break
+# Press 'p' to take a picture
+    while True:
 
-            rawCapture.truncate(0)
-
-    if PiOrUSB == 2: # USB camera
-        # Press 'p' to take a picture
-        while(True):
-
-            ret, frame = cap.read()
-            cv2.imshow("Card",frame)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("p"):
-                image = frame
-                break
+        ret, frame = cap.read()
+        cv2.imshow("Card",frame)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("p"):
+            image = frame
+            break
 
     # Pre-process image
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)

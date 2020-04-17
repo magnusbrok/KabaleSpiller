@@ -37,6 +37,7 @@ CARD_MIN_AREA = 25000
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
+
 def preprocces_image(image):
 
     #cv2.imshow('Card class recieved image', image)
@@ -49,7 +50,6 @@ def preprocces_image(image):
 
     kernel = np.ones((3, 3), np.uint8)
     dilate = cv2.dilate(edges, kernel, iterations=1)
-    # vi prøver lige uden dilate så pt returner vi edges i stedet
 
     return dilate
 
