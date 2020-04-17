@@ -15,14 +15,8 @@ def main():
         ret, frame = cap.read()
         frame = imutils.resize(frame, 640)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        blur = cv2.GaussianBlur(gray, (5, 5), 0)
 
-        edges = cv2.Canny(blur, 50, 150, True)
-
-        cv2.imshow("edges", edges)
-
-        kernel = np.ones((5, 5), np.uint8)
-        dilate = cv2.dilate(edges, kernel, iterations=1)
+        dilate = Cards.preprocces_image(gray)
 
         contours, hierarchy = cv2.findContours(dilate, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 

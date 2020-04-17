@@ -3,30 +3,25 @@ import imutils
 import numpy as np
 import os
 
+import Cards
 
 
 def main():
-    cardPath = 'Training-Imgs/kabale_1.jpg'
+    cardPath = 'Training-Imgs/kabale_3.jpg'
+    #cardPath = 'Training-Imgs/2_card.jpg'
 
-    printImg = cv2.imread(cardPath)
-    printFrame = imutils.resize(printImg, 640, 640)
+    print_img = cv2.imread(cardPath)
+    print_frame = imutils.resize(print_img, 640, 640)
 
     image = cv2.imread(cardPath, cv2.IMREAD_GRAYSCALE)
-
     frame = imutils.resize(image, 640, 640)
 
-    cv2.imshow('frame-grayed', frame)
+    #cv2.imshow('frame-grayed', frame)
 
-    blur = cv2.GaussianBlur(frame, (9, 9), 0)
+    # Standard prerpoccesing of input
+    dilate = Cards.preprocces_image(frame)
 
-    edges = cv2.Canny(blur, 50, 150, True)
-
-    cv2.imshow('edges', edges)
-
-    kernel = np.ones((5, 5), np.uint8)
-    dilate = cv2.dilate(edges, kernel, iterations=1)
-
-    contours, hierarchy = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(dilate, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     cv2.imshow('Dialated', dilate)
 
@@ -39,18 +34,30 @@ def main():
         if (area <= 30000 and area >= 1200):
             temp_contours.append(cnt)
 
-    cv2.drawContours(printFrame, temp_contours, -1, (0, 255, 0), 3)
+            card = cnt
 
-    cv2.imshow('Contours', printFrame)
+            # Approximate the corner points of the card
+            peri = cv2.arcLength(card, True)
+            approx = cv2.approxPolyDP(card, 0.01 * peri, True)
+            pts = np.float32(approx)
 
-    print("numberf of contoyurs %d -> "%len(temp_contours))
+            x, y, w, h = cv2.boundingRect(card)
 
+            # Flatten the card and convert it to 200x300
+            warp = Cards.flattener(frame, pts, w, h)
+
+            cv2.imshow(str(area), warp)
+
+    cv2.drawContours(print_frame, temp_contours, -1, (0, 255, 0), 3)
+
+    cv2.imshow('Contours', print_frame)
+
+    print("number of contours %d -> "%len(temp_contours))
 
 
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
 
 
 main()

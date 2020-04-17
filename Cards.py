@@ -37,6 +37,22 @@ CARD_MIN_AREA = 25000
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
+def preprocces_image(image):
+
+    #cv2.imshow('Card class recieved image', image)
+
+    blur = cv2.GaussianBlur(image, (9, 9), 0)
+
+    edges = cv2.Canny(blur, 50, 150, True)
+
+    #cv2.imshow('edges', edges)
+
+    kernel = np.ones((3, 3), np.uint8)
+    dilate = cv2.dilate(edges, kernel, iterations=1)
+    # vi prøver lige uden dilate så pt returner vi edges i stedet
+
+    return dilate
+
 ### Structures to hold query card and train card information ###
 
 class Query_card:
@@ -103,7 +119,7 @@ def load_suits(filepath):
 
     return train_suits
 
-def preprocess_image(image):
+def preprocess_imageOLD(image):
     """Returns a grayed, blurred, and adaptively thresholded camera image."""
 
    # gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
@@ -382,7 +398,7 @@ def flattener(image, pts, w, h):
     dst = np.array([[0,0],[maxWidth-1,0],[maxWidth-1,maxHeight-1],[0, maxHeight-1]], np.float32)
     M = cv2.getPerspectiveTransform(temp_rect,dst)
     warp = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
-    warp = cv2.cvtColor(warp,cv2.COLOR_BGR2GRAY)
+    #warp = cv2.cvtColor(warp,cv2.COLOR_BGR2GRAY)
 
         
 
