@@ -1,12 +1,11 @@
 import cv2
 import pytesseract
 
+# Installed location of Tesseract-OCR in my system
 pytesseract.pytesseract.tesseract_cmd = '/usr/local/Cellar/tesseract/4.1.1/bin/tesseract'
 
 # read image
-#img = cv2.imread('Training-Imgs/1_card.jpg')
-
-img = cap = cv2.VideoCapture(0)
+img = cv2.imread('Training-Imgs/1_card.jpg')
 
 # pytesseract only accepts RGB values, so we convert from openCV BGR to RGB
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
