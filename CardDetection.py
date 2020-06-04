@@ -24,6 +24,10 @@ def main():
 
         #pre_proc = Cards.preprocess_image(frame)
 
+        Cards.draw_board(frame)
+
+
+
         # Draw all contours
         temp_contours = []
 

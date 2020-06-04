@@ -7,7 +7,9 @@ import Cards
 
 
 def main():
-    cardPath = 'Training-Imgs/4_card.jpg'
+
+    cardPath = 'Training-Imgs/kabale_2.jpg'
+
     #cardPath = 'Training-Imgs/2_card.jpg'
     cutoutstr = 1
     print_img = cv2.imread(cardPath)
@@ -24,6 +26,9 @@ def main():
     contours, hierarchy = cv2.findContours(dilate, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     cv2.imshow('Dialated', dilate)
+
+    Cards.draw_board(frame)
+    cv2.imshow("Frame", frame)
 
 
     temp_contours = []
@@ -54,9 +59,18 @@ def main():
             cv2.imshow(str(area), showframe)
 
 
+            cv2.imshow(str(area), warp)
+
+
     cv2.drawContours(print_frame, temp_contours, -1, (0, 255, 0), 3)
 
-    cv2.imshow('Contours', print_frame)
+    print_frame = cv2.line(print_frame, (0,120) , (640,100), (255, 0, 0), 1)
+    print_frame = cv2.line(print_frame, (500,103) , (500,0), (255, 0, 0), 1)
+
+    top_image = print_frame[0:0, 200:200]
+    ##cv2.imshow("top image", top_image)
+    ##cv2.imshow('Contours', print_frame)
+
 
     print("number of contours %d -> "%len(temp_contours))
 
@@ -67,3 +81,4 @@ def main():
 
 
 main()
+
