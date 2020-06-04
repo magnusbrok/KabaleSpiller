@@ -5,19 +5,19 @@ import pytesseract
 pytesseract.pytesseract.tesseract_cmd = '/usr/local/Cellar/tesseract/4.1.1/bin/tesseract'
 
 # read image
-img = cv2.imread('Training-Imgs/1_card.jpg')
+img = cv2.imread('Training-Imgs/Text1.png')
 
 # pytesseract only accepts RGB values, so we convert from openCV BGR to RGB
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 # Print text from image
-# print(pytesseract.image_to_string(img))
+print(pytesseract.image_to_string(img))
 
 # Print bounding-boxes of each character
 # print(pytesseract.image_to_boxes(img))
 
 ### Detecting characters
-# Define information of size og images
+# Define information of size and images (h = height, w = width)
 hImg, wImg,_ = img.shape
 
 # Store all information in a list "boxes"

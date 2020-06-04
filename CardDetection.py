@@ -8,8 +8,8 @@ import Cards
 
 def main():
 
-    #cap = cv2.VideoCapture(0)
-    cap = cv2.VideoCapture('http://192.168.1.135:4905/video')
+    cap = cv2.VideoCapture(0)
+    #cap = cv2.VideoCapture('http://192.168.1.135:4905/video')
 
     while True:
         ret, frame = cap.read()
