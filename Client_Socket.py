@@ -1,33 +1,24 @@
 import socket
 import pickle
 
-# Kilde: https://pythonprogramming.net/pickle-objects-sockets-tutorial-python-3/
+# Kilde: https://pythonprogramming.net/pickle-objects-sockets-tutorial-python-3/'
+# https://stackoverflow.com/questions/4185242/communication-between-python-client-and-java-server
 
-HEADERSIZE = 1024
+HOST = "localhost"
+PORT = 8080
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((socket.gethostname(), 41178))
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((HOST, PORT))
 
-while True:
+sock.sendall(b'Hello\r\n')
+data = sock.recv(1024)
+print ("1)", data)
 
-    full_msg = b''
-    new_msg = True
-    while True:
-        msg = s.recv(1024)
-        if new_msg:
-            print(f"new message length: {msg[:HEADERSIZE]}")
-            msglen = int(msg[:HEADERSIZE])
-            new_msg = False
-        full_msg += msg
+if ( data == b'olleH\r\n'):
+    sock.sendall(b'Bye\n')
+    data = sock.recv(1024)
+    print ("2)", data)
 
-        if len(full_msg) - HEADERSIZE == msglen:
-            print("full msg recieved")
-            print(full_msg[HEADERSIZE:])
-
-            d = pickle.loads(full_msg[HEADERSIZE:])
-            print(d)
-
-            new_msg = True
-            full_msg = b''
-
-    print(full_msg)
+    if (data == b'eyB\r\n'):
+        sock.close()
+        print ("Socket closed")
