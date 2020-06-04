@@ -7,9 +7,9 @@ import Cards
 
 
 def main():
-    cardPath = 'Training-Imgs/kabale_3.jpg'
+    cardPath = 'Training-Imgs/4_card.jpg'
     #cardPath = 'Training-Imgs/2_card.jpg'
-
+    cutoutstr = 1
     print_img = cv2.imread(cardPath)
     print_frame = imutils.resize(print_img, 640, 640)
 
@@ -46,7 +46,13 @@ def main():
             # Flatten the card and convert it to 200x300
             warp = Cards.flattener(frame, pts, w, h)
 
-            cv2.imshow(str(area), warp)
+
+
+           # cv2.imshow(str(area), warp)
+            cutout = warp[0:80, 0:35]
+            showframe = imutils.resize(cutout, 120, 120)
+            cv2.imshow(str(area), showframe)
+
 
     cv2.drawContours(print_frame, temp_contours, -1, (0, 255, 0), 3)
 
