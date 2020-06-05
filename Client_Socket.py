@@ -25,7 +25,7 @@ buildingTowerData = json.dumps(buildingTower, cls=CardEncoder)
 sock.sendall(bytes(buildingTowerData, encoding='utf8'))
 
 
-solitaire = SolitaireDTO(card, buildingTower, {'C': card, 'D': CardDTO('D', 5)})
+solitaire = SolitaireDTO(card, tower, {'C': card, 'D': CardDTO('D', 5)})
 print(solitaire)
 
 #data = json.dumps(card, cls=CardEncoder)
