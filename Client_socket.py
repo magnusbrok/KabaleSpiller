@@ -1,6 +1,8 @@
 import socket
 import pickle
 import json
+
+from DTO.buildingTowerDTO import BuildingTowerDTO
 from DTO.cardDTO import CardDTO, CardEncoder
 from DTO.SolitaireDTO import SolitaireDTO, SolitaireEncoder
 
@@ -16,7 +18,14 @@ sock.connect((HOST, PORT))
 card = CardDTO('C', 3)
 print(card)
 
-solitaire = SolitaireDTO(card, ['placeholder', 'placeholder2'], {'C': card, 'D': CardDTO('D', 5)})
+tower = [card, CardDTO('D', 10)]
+buildingTower = BuildingTowerDTO(True, tower)
+
+buildingTowerData = json.dumps(buildingTower, cls=CardEncoder)
+sock.sendall(bytes(buildingTowerData, encoding='utf8'))
+
+
+solitaire = SolitaireDTO(card, buildingTower, {'C': card, 'D': CardDTO('D', 5)})
 print(solitaire)
 
 #data = json.dumps(card, cls=CardEncoder)
@@ -24,6 +33,7 @@ data1 = json.dumps(solitaire, cls=SolitaireEncoder)
 
 #sock.sendall(bytes(data, encoding='utf8'))
 sock.sendall(bytes(data1, encoding='utf-8'))
+
 
 # sock.sendall(b'Hello\r\n')
 # data = sock.recv(1024)
