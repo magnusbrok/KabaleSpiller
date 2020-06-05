@@ -13,7 +13,7 @@ def main():
 
     while True:
         ret, frame = cap.read()
-        frame = imutils.resize(frame, 640)
+        frame = imutils.resize(frame, 1280)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         dilate = Cards.preprocces_image(gray)

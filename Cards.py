@@ -14,11 +14,14 @@ import time
 
 ### Constants ###
 
+# Videofeed dimensions
+feed_width = 1800
+feed_hight = 1800
 # constrant used for defining sections of the gameboard
-top_section_h = 100
-top_section_c_w = 106
-bot_section_h = 640 - top_section_h
-bot_section_c_w = 91
+top_section_h = int(feed_hight*0.15625)
+top_section_c_w = int(feed_width/6)
+bot_section_h = feed_hight - top_section_h
+bot_section_c_w = int(feed_width/7)
 
 # Adaptive threshold levels
 BKG_THRESH = 60
@@ -419,7 +422,7 @@ def flattener(image, pts, w, h):
 
 def draw_board(frame):
     # Top of the board
-    cv2.line(frame, (0, top_section_h), (640, top_section_h), (255, 0, 0), 3)
+    cv2.line(frame, (0, top_section_h), (feed_width, top_section_h), (255, 0, 0), 3)
 
     # The 6 sections of top board
     for x in range(1, 6):
@@ -433,14 +436,14 @@ def cutout_board_sections(frame):
     sections = []
     section_number = 1
     for x in range(0, 6):
-        image = frame[0: top_section_h, top_section_c_w * x:top_section_c_w * (x + 1)]
-        sections.append(imutils.resize(image, 200, 120))
+        image = frame[0: int(top_section_h), int(top_section_c_w) * x:int(top_section_c_w) * (x + 1)]
+        sections.append(imutils.resize(image, 600, 480))
 
     for x in range(0, 7):
         image = frame[top_section_h:bot_section_h, bot_section_c_w * x:bot_section_c_w * (x + 1)]
-        sections.append(imutils.resize(image, 200, 500))
+        sections.append(imutils.resize(image, 600, 480))
 
-   #for i in range(0, len(sections)):
+    #for i in range(0, len(sections)):
         #contours, heir = cv2.findContours(sections[i], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         #cv2.drawContours(sections[i], contours, 0, (255, 255, 255), 3)
         #cv2.imshow(str(i), sections[i])
