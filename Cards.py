@@ -7,6 +7,7 @@
 
 
 # Import necessary packages
+import imutils
 import numpy as np
 import cv2
 import time
@@ -427,17 +428,21 @@ def draw_board(frame):
     for x in range(1, 8):
         cv2.line(frame, (bot_section_c_w * x, top_section_h), (bot_section_c_w * x, bot_section_h), (255, 0, 0), 3)
 
-    sections = cutout_board_sections(frame)
-
-    for i in range(0, len(sections)):
-        cv2.imshow(str(i), sections[i])
-
 
 def cutout_board_sections(frame):
     sections = []
     section_number = 1
     for x in range(0, 6):
-        sections.append(frame[0: top_section_h, top_section_c_w * x:top_section_c_w * (x + 1)])
+        image = frame[0: top_section_h, top_section_c_w * x:top_section_c_w * (x + 1)]
+        sections.append(imutils.resize(image, 200, 120))
+
     for x in range(0, 7):
-        sections.append(frame[top_section_h:bot_section_h, bot_section_c_w * x:bot_section_c_w * (x + 1)])
+        image = frame[top_section_h:bot_section_h, bot_section_c_w * x:bot_section_c_w * (x + 1)]
+        sections.append(imutils.resize(image, 200, 500))
+
+   #for i in range(0, len(sections)):
+        #contours, heir = cv2.findContours(sections[i], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        #cv2.drawContours(sections[i], contours, 0, (255, 255, 255), 3)
+        #cv2.imshow(str(i), sections[i])
+
     return sections
