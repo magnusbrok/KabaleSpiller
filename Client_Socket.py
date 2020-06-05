@@ -1,6 +1,8 @@
 import socket
 import pickle
 import json
+
+from DTO.buildingTowerDTO import BuildingTowerDTO
 from DTO.cardDTO import CardDTO, CardEncoder
 
 # Kilde: https://pythonprogramming.net/pickle-objects-sockets-tutorial-python-3/'
@@ -16,8 +18,14 @@ card = CardDTO('C', 3)
 print(card)
 
 data = json.dumps(card, cls=CardEncoder)
-
 sock.sendall(bytes(data, encoding='utf8'))
+
+tower = [card, CardDTO('D', 10)]
+buildingTower = BuildingTowerDTO(True, tower)
+print(buildingTower)
+
+buildingTowerData = json.dumps(buildingTower, cls=CardEncoder)
+sock.sendall(bytes(buildingTowerData, encoding='utf8'))
 
 # sock.sendall(b'Hello\r\n')
 # data = sock.recv(1024)
