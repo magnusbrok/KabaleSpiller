@@ -6,35 +6,20 @@ from DTO.buildingTowerDTO import BuildingTowerDTO
 from DTO.cardDTO import CardDTO, CardEncoder
 from DTO.SolitaireDTO import SolitaireDTO, SolitaireEncoder
 
+
 # Kilde: https://pythonprogramming.net/pickle-objects-sockets-tutorial-python-3/'
 # https://stackoverflow.com/questions/4185242/communication-between-python-client-and-java-server
 
-HOST = "localhost"
-PORT = 8080
+class Socket:
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((HOST, PORT))
+    def send(self, data):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((self.host, self.port))
+        sock.sendall(bytes(data, encoding='utf-8'))
 
-card = CardDTO('C', 3)
-print(card)
-
-tower = [card, CardDTO('D', 10)]
-buildingTower = BuildingTowerDTO(True, tower)
-
-solitaire = SolitaireDTO(card, tower, {'C': card, 'D': CardDTO('D', 5)})
-print(solitaire)
-
-data1 = json.dumps(solitaire, cls=SolitaireEncoder)
-
-sock.sendall(bytes(data1, encoding='utf-8'))
-sock.close()
-
-
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((HOST, PORT))
-buildingTowerData = json.dumps(buildingTower, cls=CardEncoder)
-print(buildingTower)
-sock.sendall(bytes(buildingTowerData, encoding='utf8'))
 
 # sock.sendall(b'Hello\r\n')
 # data = sock.recv(1024)
