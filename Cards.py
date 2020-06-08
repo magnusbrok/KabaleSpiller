@@ -15,13 +15,13 @@ import time
 ### Constants ###
 
 # Videofeed dimensions
-feed_width = 1800
-feed_hight = 1800
+feed_width = 1600
+feed_hight = 1600
 # constrant used for defining sections of the gameboard
-top_section_h = int(feed_hight*0.15625)
-top_section_c_w = int(feed_width/6)
+top_section_h = int(feed_hight * 0.15625)
+top_section_c_w = int(feed_width / 6)
 bot_section_h = feed_hight - top_section_h
-bot_section_c_w = int(feed_width/7)
+bot_section_c_w = int(feed_width / 7)
 
 # Adaptive threshold levels
 BKG_THRESH = 60
@@ -50,17 +50,22 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 
 def preprocces_image(image):
     # cv2.imshow('Card class recieved image', image)
+    cv2.imshow("image", image)
 
-    blur = cv2.GaussianBlur(image, (9, 9), 0)
+    blur = cv2.GaussianBlur(image, (3, 3), 0)
+    cv2.imshow("blur", blur)
 
     edges = cv2.Canny(blur, 50, 150, True)
-
-    # cv2.imshow('edges', edges)
+    cv2.imshow("edges", edges)
 
     kernel = np.ones((3, 3), np.uint8)
     dilate = cv2.dilate(edges, kernel, iterations=1)
+    #cv2.imshow("dilate", dilate)
 
-    return dilate
+    retval, thresh = cv2.threshold(edges, 50, 200, cv2.THRESH_BINARY)
+    cv2.imshow("thresh", thresh)
+
+    return thresh
 
 
 ### Structures to hold query card and train card information ###
@@ -419,6 +424,7 @@ def flattener(image, pts, w, h):
 
     return warp
 
+
 def flatten_stack(image, pts, w, h):
     """Flattens an image of a cardstack into a top-down 200x300 perspective.
     Returns the flattened, re-sized, grayed image.
@@ -511,10 +517,9 @@ def cutout_board_sections(frame):
         image = frame[top_section_h:bot_section_h, bot_section_c_w * x:bot_section_c_w * (x + 1)]
         sections.append(imutils.resize(image, 600, 480))
 
-    #for i in range(0, len(sections)):
-        #contours, heir = cv2.findContours(sections[i], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        #cv2.drawContours(sections[i], contours, 0, (255, 255, 255), 3)
-        #cv2.imshow(str(i), sections[i])
+    # for i in range(0, len(sections)):
+    # contours, heir = cv2.findContours(sections[i], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # cv2.drawContours(sections[i], contours, 0, (255, 255, 255), 3)
+    # cv2.imshow(str(i), sections[i])
 
     return sections
-

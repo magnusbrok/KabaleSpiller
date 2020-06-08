@@ -15,14 +15,16 @@ def main():
     train_ranks = Cards.load_ranks(path + '/Card_Imgs/')
     train_suits = Cards.load_suits(path + '/Card_Imgs/')
 
-    cardPath = 'Training-Imgs/kabale_2.jpg'
+    cardPath = 'Training-Imgs/kabale_1.jpg'
     #cardPath = 'Training-Imgs/2_card.jpg'
 
+    img_size = 1600
+
     print_img = cv2.imread(cardPath)
-    print_frame = imutils.resize(print_img, 1800, 1800)
+    print_frame = imutils.resize(print_img, img_size, img_size)
 
     image = cv2.imread(cardPath, cv2.IMREAD_GRAYSCALE)
-    frame = imutils.resize(image, 1800, 1800)
+    frame = imutils.resize(image, img_size, img_size)
 
     # cv2.imshow('frame-grayed', frame)
 

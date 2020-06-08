@@ -7,7 +7,7 @@ import Cards
 
 section_names = ["drawStack", "lastDraw", "1. Base stack", "2. base stack", "3. Base stack", "4. Base stack",
                  "1. tower", "2. tower", "3. tower", "4. tower", "5. tower", "6. tower", "7. tower"]
-
+IMG_size = 1600
 def main():
 
     # Load the train rank and suit images
@@ -15,13 +15,13 @@ def main():
     train_ranks = Cards.load_ranks(path + '/Card_Imgs/')
     train_suits = Cards.load_suits(path + '/Card_Imgs/')
 
-    cardPath = 'Training-Imgs/kabale_2.jpg'
+    cardPath = 'Training-Imgs/kabale_1.jpg'
 
     print_img = cv2.imread(cardPath)
-    print_frame = imutils.resize(print_img, 1800, 1800)
+    print_frame = imutils.resize(print_img, IMG_size, IMG_size)
 
     image = cv2.imread(cardPath, cv2.IMREAD_GRAYSCALE)
-    frame = imutils.resize(image, 1800, 1800)
+    frame = imutils.resize(image, IMG_size, IMG_size)
 
     # cv2.imshow('frame-grayed', frame)
 
@@ -41,9 +41,10 @@ def main():
         section = sections[i]
         print_section = print_sections[i]
         print_only = imutils.resize(print_section, 200, 140)
-        #cv2.imshow(str(i), print_only)
 
         contours, hierarchy = cv2.findContours(section, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+
         cnts_sort = []
         index_sort = sorted(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]), reverse=True)
         # Fill empty lists with sorted contour and sorted hierarchy. Now,
@@ -71,30 +72,38 @@ def main():
             # Flatten the card and convert it to 200x300
             warp = Cards.flatten_stack(print_sections[i], pts, w, h)
 
-            print_warp = imutils.resize(warp, 200, 140)
-            #cv2.imshow(str(i) + "warp", print_warp)
-            edge_h = h-440 # 420 represents the bottom part of the first card
-            edge_w = 80
+            print_warp = imutils.resize(warp, 240, 140)
+            # cv2.imshow(str(i) + "warp", print_warp)
+            edge_h = h - 420 #  represents the bottom part of the first card
+            edge_w = 50
             corner_h = 160
-            edges = warp[0: edge_h, 0:edge_w]
+            edges = print_warp[0: edge_h, 10:edge_w]
+
 
             print(edge_h)
             print_edges = imutils.resize(edges, 60, 60)
 
-            cv2.imshow(str(i) + "edge of warp", print_edges)
+            edges_processed = Cards.preprocces_image(edges)
+            contours, hierarchy = cv2.findContours(edges_processed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+            filtered_contours = []
+            for cnt in contours:
+                area = cv2.contourArea(cnt)
+                print(cv2.contourArea(cnt))
+                if area >= 120:
+                    filtered_contours.append(cnt)
+            cv2.drawContours(edges, filtered_contours, -1, (255, 0, 0), 2)
+            cv2.imshow(str(i), edges)
+            i = 0
 
-            i = 1
-            while i*corner_h < edge_h:
-                if i == 1:
-                    corner = edges[edge_h-corner_h:edge_h, 0:edge_w]
-                else:
-                    corner = edges[edge_h - corner_h*i:edge_h-corner_h*(i-1), 0:edge_w]
-
-                cv2.imshow(str(i)+"corner", corner)
-                #above = edges[0:200, 0:80]
-                #cv2.imshow("above corner", above)
+            for cnt in filtered_contours:
+                x, y, w, h = cv2.boundingRect(cnt)
+                rank_roi = edges_processed[y:y + h, x:x + w]
+                rank_sized = cv2.resize(rank_roi, (Cards.RANK_WIDTH, Cards.RANK_HEIGHT), 0, 0)
+                final_img = rank_sized
+                cv2.imshow(str(i), final_img)
                 i += 1
 
+            #cv2.imshow(str(i) + "edge of warp", print_edges)
 
 
     cv2.waitKey(0)

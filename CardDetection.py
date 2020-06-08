@@ -8,12 +8,14 @@ import Cards
 
 def main():
 
-    #cap = cv2.VideoCapture(0)
-    cap = cv2.VideoCapture('http://192.168.1.135:4905/video')
+    cap = cv2.VideoCapture(1)
+    #cap = cv2.VideoCapture('http://192.168.1.135:4905/video')
 
     while True:
         ret, frame = cap.read()
-        frame = imutils.resize(frame, 1280)
+        frame = cv2.rotate(frame, cv2.ROTATE_180) # Only relevant for Magnus
+        frame = imutils.resize(frame, 1080)
+        cv2.imshow("test", frame)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         dilate = Cards.preprocces_image(gray)
