@@ -20,7 +20,8 @@ RANK_HEIGHT = 125
 SUIT_WIDTH = 70
 SUIT_HEIGHT = 100
 
-cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('http://192.168.1.135:4905/video')
 
 # Use counter variable to switch from isolating Rank to isolating Suit
 i = 1
@@ -51,6 +52,8 @@ for Name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight',
     blur = cv2.GaussianBlur(gray,(5,5),0)
     retval, thresh = cv2.threshold(blur,100,255,cv2.THRESH_BINARY)
 
+
+
     # Find contours and sort them by size
     cnts,hier = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     cnts = sorted(cnts, key=cv2.contourArea,reverse=True)
@@ -74,17 +77,23 @@ for Name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight',
 
     # Flatten the card and convert it to 200x300
     warp = Cards.flattener(image,pts,w,h)
+    cv2.imshow("warp", warp)
 
     # Grab corner of card image, zoom, and threshold
     corner = warp[0:84, 0:32]
     #corner_gray = cv2.cvtColor(corner,cv2.COLOR_BGR2GRAY)
     corner_zoom = cv2.resize(corner, (0,0), fx=4, fy=4)
-    corner_blur = cv2.GaussianBlur(corner_zoom,(5,5),0)
+    gray_corner = cv2.cvtColor(corner_zoom,cv2.COLOR_BGR2GRAY)
+    corner_blur = cv2.GaussianBlur(gray_corner,(5,5),0)
     retval, corner_thresh = cv2.threshold(corner_blur, 155, 255, cv2. THRESH_BINARY_INV)
+    cv2.imshow("corner", corner_zoom)
+
 
     # Isolate suit or rank
     if i <= 13: # Isolate rank
         rank = corner_thresh[20:185, 0:128] # Grabs portion of image that shows rank
+        cv2.imshow("rank", rank)
+
         rank_cnts, hier = cv2.findContours(rank, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
         rank_cnts = sorted(rank_cnts, key=cv2.contourArea,reverse=True)
         x,y,w,h = cv2.boundingRect(rank_cnts[0])
@@ -94,6 +103,8 @@ for Name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight',
 
     if i > 13: # Isolate suit
         suit = corner_thresh[186:336, 0:128] # Grabs portion of image that shows suit
+        cv2.imshow("suit", suit)
+
         suit_cnts, hier = cv2.findContours(suit, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
         suit_cnts = sorted(suit_cnts, key=cv2.contourArea,reverse=True)
         x,y,w,h = cv2.boundingRect(suit_cnts[0])
@@ -112,4 +123,3 @@ for Name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight',
     i = i + 1
 
 cv2.destroyAllWindows()
-camera.close()

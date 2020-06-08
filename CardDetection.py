@@ -8,12 +8,14 @@ import Cards
 
 def main():
 
-    #cap = cv2.VideoCapture(0)
-    cap = cv2.VideoCapture('http://192.168.1.135:4905/video')
+    cap = cv2.VideoCapture(1)
+    #cap = cv2.VideoCapture('http://192.168.1.135:4905/video')
 
     while True:
         ret, frame = cap.read()
-        frame = imutils.resize(frame, 640)
+        frame = cv2.rotate(frame, cv2.ROTATE_180) # Only relevant for Magnus
+        frame = imutils.resize(frame, 1080)
+        cv2.imshow("test", frame)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         dilate = Cards.preprocces_image(gray)
@@ -23,6 +25,10 @@ def main():
         cv2.imshow('Dialated', dilate)
 
         #pre_proc = Cards.preprocess_image(frame)
+
+        Cards.draw_board(frame)
+
+
 
         # Draw all contours
         temp_contours = []
