@@ -21,19 +21,20 @@ print(card)
 tower = [card, CardDTO('D', 10)]
 buildingTower = BuildingTowerDTO(True, tower)
 
-buildingTowerData = json.dumps(buildingTower, cls=CardEncoder)
-sock.sendall(bytes(buildingTowerData, encoding='utf8'))
-
-
 solitaire = SolitaireDTO(card, tower, {'C': card, 'D': CardDTO('D', 5)})
 print(solitaire)
 
-#data = json.dumps(card, cls=CardEncoder)
 data1 = json.dumps(solitaire, cls=SolitaireEncoder)
 
-#sock.sendall(bytes(data, encoding='utf8'))
 sock.sendall(bytes(data1, encoding='utf-8'))
+sock.close()
 
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((HOST, PORT))
+buildingTowerData = json.dumps(buildingTower, cls=CardEncoder)
+print(buildingTower)
+sock.sendall(bytes(buildingTowerData, encoding='utf8'))
 
 # sock.sendall(b'Hello\r\n')
 # data = sock.recv(1024)

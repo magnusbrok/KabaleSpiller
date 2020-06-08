@@ -2,9 +2,9 @@ from json import JSONEncoder
 
 
 class BuildingTowerDTO:
-    def __init__(self, b, faceUp):
-        self.b = b
-        self.faceUp = faceUp
+    def __init__(self, faceDownCards, faceUpCards):
+        self.faceDownCards = faceDownCards
+        self.faceUpCards = faceUpCards
 
 
 class BuildingTowerEncoder(JSONEncoder):
