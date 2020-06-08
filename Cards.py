@@ -39,8 +39,8 @@ RANK_HEIGHT = 125
 SUIT_WIDTH = 70
 SUIT_HEIGHT = 100
 
-RANK_DIFF_MAX = 2000
-SUIT_DIFF_MAX = 700
+RANK_DIFF_MAX = 2300
+SUIT_DIFF_MAX = 1700
 
 CARD_MAX_AREA = 120000
 CARD_MIN_AREA = 25000
@@ -50,22 +50,21 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 
 def preprocces_image(image):
     # cv2.imshow('Card class recieved image', image)
-    cv2.imshow("image", image)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    blur = cv2.GaussianBlur(image, (3, 3), 0)
-    cv2.imshow("blur", blur)
+    #cv2.imshow("image", image)
+    image = gray
+    blur = cv2.GaussianBlur(image, (7, 7), 0)
+    #cv2.imshow("blur", blur)
 
-    edges = cv2.Canny(blur, 50, 150, True)
-    cv2.imshow("edges", edges)
+    edges = cv2.Canny(blur, 120, 110)
+    #cv2.imshow("edges", edges)
 
     kernel = np.ones((3, 3), np.uint8)
     dilate = cv2.dilate(edges, kernel, iterations=1)
     #cv2.imshow("dilate", dilate)
 
-    retval, thresh = cv2.threshold(edges, 50, 200, cv2.THRESH_BINARY)
-    cv2.imshow("thresh", thresh)
-
-    return thresh
+    return dilate
 
 
 ### Structures to hold query card and train card information ###
@@ -75,6 +74,8 @@ class Query_card:
 
     def __init__(self):
         self.contour = []  # Contour of card
+        self.rank_contour = []
+        self.suit_contour = []
         self.width, self.height = 0, 0  # Width and height of card
         self.corner_pts = []  # Corner points of card
         self.center = []  # Center point of card
@@ -273,6 +274,52 @@ def preprocess_card(contour, image):
         Qsuit_roi = Qsuit[y2:y2 + h2, x2:x2 + w2]
         Qsuit_sized = cv2.resize(Qsuit_roi, (SUIT_WIDTH, SUIT_HEIGHT), 0, 0)
         qCard.suit_img = Qsuit_sized
+
+    return qCard
+
+
+def preprocess_stack_card(rank_contour, suit_contour, image):
+    """Uses contour to find information about the query card. Isolates rank
+    and suit images from the card."""
+
+    # Initialize new Query_card object
+    qCard = Query_card()
+
+    qCard.rank_contour = rank_contour
+    qCard.suit_contour = suit_contour
+
+
+    # Sample known white pixel intensity to determine good threshold level
+    #white_level = Qcorner_zoom[15, int((CORNER_WIDTH * 4) / 2)]
+    #thresh_level = white_level - CARD_THRESH
+    #if (thresh_level <= 0):
+     #   thresh_level = 1
+    retval, query_thresh = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY_INV)
+
+    # Split in to top and bottom half (top shows rank, bottom shows suit)
+    Qrank = query_thresh[20:185, 0:128]
+    Qsuit = query_thresh[186:336, 0:128]
+
+
+    # Find bounding rectangle for largest contour, use it to resize query rank
+    # image to match dimensions of the train rank image
+    x1, y1, w1, h1 = cv2.boundingRect(rank_contour)
+    Qrank_roi = query_thresh[y1:y1 + h1, x1:x1 + w1]
+    Qrank_sized = cv2.resize(Qrank_roi, (RANK_WIDTH, RANK_HEIGHT), 0, 0)
+    qCard.rank_img = Qrank_sized
+
+    #cv2.imshow("rank img", Qrank_sized)
+
+
+
+    # Find bounding rectangle for largest contour, use it to resize query suit
+    # image to match dimensions of the train suit image
+
+    x2, y2, w2, h2 = cv2.boundingRect(suit_contour)
+    Qsuit_roi = query_thresh[y2:y2 + h2, x2:x2 + w2]
+    Qsuit_sized = cv2.resize(Qsuit_roi, (SUIT_WIDTH, SUIT_HEIGHT), 0, 0)
+    qCard.suit_img = Qsuit_sized
+    #cv2.imshow("rank img", Qsuit_sized)
 
     return qCard
 

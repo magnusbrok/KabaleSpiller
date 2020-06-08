@@ -29,7 +29,7 @@ def main():
     dilate = Cards.preprocess_imageOLD(frame)
 
     # contours, hierarchy = cv2.findContours(dilate, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
+    Cards.draw_board(print_frame)
     cv2.imshow("printframe", print_frame)
     #cv2.imshow('Dialated', dilate)
 
@@ -37,7 +37,7 @@ def main():
     print_sections = Cards.cutout_board_sections(print_frame)
     cards = []
     section_counter = 0
-    for i in range(12, 13):
+    for i in range(0, 13):
         section = sections[i]
         print_section = print_sections[i]
         print_only = imutils.resize(print_section, 200, 140)
@@ -55,7 +55,7 @@ def main():
             cnts_sort.append(contours[j])
 
 
-        print(len(cnts_sort))
+        #print(len(cnts_sort))
 
         if len(cnts_sort) != 0:
             contour = cnts_sort[0]
@@ -73,37 +73,68 @@ def main():
             warp = Cards.flatten_stack(print_sections[i], pts, w, h)
 
             print_warp = imutils.resize(warp, 240, 140)
+            print_warp = imutils.resize(warp, 240, 140)
+
             # cv2.imshow(str(i) + "warp", print_warp)
-            edge_h = h - 420 #  represents the bottom part of the first card
+            edge_h = h  #  represents the bottom part of the first card
             edge_w = 50
             corner_h = 160
-            edges = print_warp[0: edge_h, 10:edge_w]
+            edges = print_warp[0: edge_h, 5:edge_w]
 
+            #cv2.imshow(str(i), edges)
 
-            print(edge_h)
-            print_edges = imutils.resize(edges, 60, 60)
+            edges = imutils.resize(edges, 55)
 
             edges_processed = Cards.preprocces_image(edges)
+            cv2.imshow(str(i), edges_processed)
             contours, hierarchy = cv2.findContours(edges_processed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
             filtered_contours = []
             for cnt in contours:
                 area = cv2.contourArea(cnt)
-                print(cv2.contourArea(cnt))
-                if area >= 120:
+                #print(cv2.contourArea(cnt))
+                if area >= 200:
+                    print(str(i) + "cnt Area = " + str(area))
                     filtered_contours.append(cnt)
-            cv2.drawContours(edges, filtered_contours, -1, (255, 0, 0), 2)
-            cv2.imshow(str(i), edges)
-            i = 0
+                    x, y, w, h = cv2.boundingRect(cnt)
+                    cv2.rectangle(edges, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            #cv2.drawContours(edges, filtered_contours, -1, (255, 0, 0), 2)
+            cv2.imshow(str(i) + "Edges", edges)
+            gray_section = cv2.cvtColor(edges, cv2.COLOR_BGR2GRAY)
+            kernel = np.ones((2, 2), np.uint8)
+            dilate = cv2.erode(gray_section, kernel, iterations=1)
 
-            for cnt in filtered_contours:
-                x, y, w, h = cv2.boundingRect(cnt)
-                rank_roi = edges_processed[y:y + h, x:x + w]
-                rank_sized = cv2.resize(rank_roi, (Cards.RANK_WIDTH, Cards.RANK_HEIGHT), 0, 0)
-                final_img = rank_sized
-                cv2.imshow(str(i), final_img)
-                i += 1
 
-            #cv2.imshow(str(i) + "edge of warp", print_edges)
+
+
+
+            cards = []
+
+            j = 2
+            cards_found = 0
+            print("=======================")
+            while j < len(filtered_contours)-1:
+                cards.append(Cards.preprocess_stack_card(filtered_contours[j+1], filtered_contours[j], dilate))
+
+                cards[cards_found].best_rank_match, cards[cards_found].best_suit_match, cards[cards_found]\
+                    .rank_diff, cards[cards_found].suit_diff = Cards.match_card(
+                    cards[cards_found], train_ranks, train_suits)
+                print("RESULTS for: " + str(i))
+                print(cards[cards_found].best_rank_match, cards[cards_found].best_suit_match)
+                print(cards[cards_found].rank_diff, cards[cards_found].suit_diff)
+                j += 2
+                cards_found += 1
+                print("============================")
+        else:
+            print("RESULTS for: " + str(i))
+            print("NO contours aka no cards biutch")
+            #print(cards[cards_found].best_rank_match, cards[cards_found].best_suit_match)
+            #print(cards[cards_found].rank_diff, cards[cards_found].suit_diff)
+            #j += 2
+            #cards_found += 1
+            print("============================")
+
+
+
 
 
     cv2.waitKey(0)

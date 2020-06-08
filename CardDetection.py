@@ -14,11 +14,11 @@ def main():
     while True:
         ret, frame = cap.read()
         frame = cv2.rotate(frame, cv2.ROTATE_180) # Only relevant for Magnus
-        frame = imutils.resize(frame, 1080)
+        frame = imutils.resize(frame, 1600)
         cv2.imshow("test", frame)
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        dilate = Cards.preprocces_image(gray)
+        dilate = Cards.preprocces_image(frame)
 
         contours, hierarchy = cv2.findContours(dilate, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
