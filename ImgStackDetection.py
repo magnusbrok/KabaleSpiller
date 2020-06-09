@@ -40,6 +40,7 @@ def main():
     sections = Cards.cutout_board_sections(dilate)
     print_sections = Cards.cutout_board_sections(print_frame)
     cards = []
+    buildingTowerArray = []
     section_counter = 0
     for i in range(6, 13):
         section = sections[i]
@@ -113,7 +114,7 @@ def main():
 
             cards = []
             cardsArray = []
-            buildingTowerArray = []
+
 
 
             j = 2
@@ -144,8 +145,6 @@ def main():
                 j += 2
                 cards_found += 1
                 print("============================")
-            # TODO: send solitaire afsted gennem socket vha. json
-            solitaire = SolitaireDTO(baseStack="", currentCard="", towers=buildingTowerArray)
 
         else:
             print("RESULTS for: " + str(i))
@@ -155,7 +154,9 @@ def main():
             #j += 2
             #cards_found += 1
             print("============================")
-
+    # TODO: send solitaire afsted gennem socket vha. json
+    # TODO: implementer basestack og currentcard funktion
+    solitaire = SolitaireDTO(baseStack="", currentCard="", towers=buildingTowerArray)
 
 
 
