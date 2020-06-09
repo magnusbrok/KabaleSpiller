@@ -82,8 +82,8 @@ class Query_card:
         self.warp = []  # 200x300, flattened, grayed, blurred image
         self.rank_img = []  # Thresholded, sized image of card's rank
         self.suit_img = []  # Thresholded, sized image of card's suit
-        self.best_rank_match = "Unknown"  # Best matched rank
-        self.best_suit_match = "Unknown"  # Best matched suit
+        self.best_rank_match = "U"  # Best matched rank
+        self.best_suit_match = "U"  # Best matched suit
         self.rank_diff = 0  # Difference between rank image and best matched train rank image
         self.suit_diff = 0  # Difference between suit image and best matched train suit image
 
@@ -110,12 +110,13 @@ def load_ranks(filepath):
     them in a list of Train_ranks objects."""
 
     train_ranks = []
+    newranks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
     i = 0
 
     for Rank in ['Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
                  'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King']:
         train_ranks.append(Train_ranks())
-        train_ranks[i].name = Rank
+        train_ranks[i].name = newranks[i]
         filename = Rank + '.jpg'
         train_ranks[i].img = cv2.imread(filepath + filename, cv2.IMREAD_GRAYSCALE)
         i = i + 1
@@ -130,7 +131,7 @@ def load_suits(filepath):
     train_suits = []
     i = 0
 
-    for Suit in ['Spades', 'Diamonds', 'Clubs', 'Hearts']:
+    for Suit in ['S', 'D', 'C', 'H']:
         train_suits.append(Train_suits())
         train_suits[i].name = Suit
         filename = Suit + '.jpg'
@@ -331,8 +332,8 @@ def match_card(qCard, train_ranks, train_suits):
 
     best_rank_match_diff = 10000
     best_suit_match_diff = 10000
-    best_rank_match_name = "Unknown"
-    best_suit_match_name = "Unknown"
+    best_rank_match_name = "U"
+    best_suit_match_name = "U"
     i = 0
 
     # If no contours were found in query card in preprocess_card function,

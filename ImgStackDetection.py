@@ -2,9 +2,11 @@ import cv2
 import imutils
 import numpy as np
 import os
+import json
 
 import Cards
-from DTO.SolitaireDTO import SolitaireDTO
+from Client_socket import Socket
+from DTO.SolitaireDTO import SolitaireDTO, SolitaireEncoder
 from DTO.buildingTowerDTO import BuildingTowerDTO
 from DTO.cardDTO import CardDTO
 
@@ -12,6 +14,8 @@ section_names = ["drawStack", "lastDraw", "1. Base stack", "2. base stack", "3. 
                  "1. tower", "2. tower", "3. tower", "4. tower", "5. tower", "6. tower", "7. tower"]
 IMG_size = 1600
 def main():
+
+    # TODO: kan kort blive læst oppefra og ned?
 
 
     # Load the train rank and suit images
@@ -156,7 +160,10 @@ def main():
             print("============================")
     # TODO: send solitaire afsted gennem socket vha. json
     # TODO: implementer basestack og currentcard funktion
-    solitaire = SolitaireDTO(baseStack="", currentCard="", towers=buildingTowerArray)
+    solitaire = SolitaireDTO(baseStack=[], currentCard=None, towers=buildingTowerArray)
+    data = json.dumps(solitaire, cls=SolitaireEncoder)
+    socket = Socket("localhost", 8080)
+    socket.send(data)
 
 
 
