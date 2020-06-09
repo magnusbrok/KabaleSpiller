@@ -4,6 +4,8 @@ import numpy as np
 import os
 
 import Cards
+from DTO.SolitaireDTO import SolitaireDTO
+from DTO.buildingTowerDTO import BuildingTowerDTO
 from DTO.cardDTO import CardDTO
 
 section_names = ["drawStack", "lastDraw", "1. Base stack", "2. base stack", "3. Base stack", "4. Base stack",
@@ -11,7 +13,6 @@ section_names = ["drawStack", "lastDraw", "1. Base stack", "2. base stack", "3. 
 IMG_size = 1600
 def main():
 
-    cardDTO = CardDTO(value="", suit="")
 
     # Load the train rank and suit images
     path = os.path.dirname(os.path.abspath(__file__))
@@ -40,7 +41,7 @@ def main():
     print_sections = Cards.cutout_board_sections(print_frame)
     cards = []
     section_counter = 0
-    for i in range(0, 13):
+    for i in range(6, 13):
         section = sections[i]
         print_section = print_sections[i]
         print_only = imutils.resize(print_section, 200, 140)
@@ -112,6 +113,8 @@ def main():
 
             cards = []
             cardsArray = []
+            buildingTowerArray = []
+
 
             j = 2
             cards_found = 0
@@ -123,16 +126,27 @@ def main():
                     .rank_diff, cards[cards_found].suit_diff = Cards.match_card(
                     cards[cards_found], train_ranks, train_suits)
 
-                #print("RESULTS for: " + str(i))
-                print(cards[cards_found])
-                cardDTO.suit = cards[cards_found].best_suit_match
-                cardDTO.value = cards[cards_found].best_rank_match
-                cardsArray.append(cardDTO())
-                #print(cards[cards_found].best_rank_match, cards[cards_found].best_suit_match)
-                #print(cards[cards_found].rank_diff, cards[cards_found].suit_diff)
+                # print("RESULTS for: " + str(i))
+                # print(cards[cards_found])
+                cardDTO = CardDTO(value=cards[cards_found].best_rank_match, suit=cards[cards_found].best_suit_match)
+                # cardDTO.suit = cards[cards_found].best_suit_match
+                # cardDTO.value = cards[cards_found].best_rank_match
+                cardsArray.append(cardDTO)
+
+                # Tilføjer array af cardDTO objekter til buildingTowerDTO.faceUpCards, er ikke 100% sikker på dette
+                # er den rigtige måde at gøre det på.
+                # TODO: tilføj så vi ved om der er face down kort eller ej
+                buildingTower = BuildingTowerDTO(faceDownCards=False, faceUpCards=cardsArray)
+                buildingTowerArray.append(buildingTower)
+                print(cardsArray[cards_found].value, cardsArray[cards_found].suit)
+                # print(cards[cards_found].best_rank_match, cards[cards_found].best_suit_match)
+                # print(cards[cards_found].rank_diff, cards[cards_found].suit_diff)
                 j += 2
                 cards_found += 1
                 print("============================")
+            # TODO: send solitaire afsted gennem socket vha. json
+            solitaire = SolitaireDTO(baseStack="", currentCard="", towers=buildingTowerArray)
+
         else:
             print("RESULTS for: " + str(i))
             print("NO contours aka no cards biutch")
@@ -145,10 +159,8 @@ def main():
 
 
 
-
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
 
 main()
 
