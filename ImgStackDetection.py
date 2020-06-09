@@ -4,11 +4,14 @@ import numpy as np
 import os
 
 import Cards
+from DTO.cardDTO import CardDTO
 
 section_names = ["drawStack", "lastDraw", "1. Base stack", "2. base stack", "3. Base stack", "4. Base stack",
                  "1. tower", "2. tower", "3. tower", "4. tower", "5. tower", "6. tower", "7. tower"]
 IMG_size = 1600
 def main():
+
+    cardDTO = CardDTO(value="", suit="")
 
     # Load the train rank and suit images
     path = os.path.dirname(os.path.abspath(__file__))
@@ -108,6 +111,7 @@ def main():
 
 
             cards = []
+            cardsArray = []
 
             j = 2
             cards_found = 0
@@ -118,9 +122,14 @@ def main():
                 cards[cards_found].best_rank_match, cards[cards_found].best_suit_match, cards[cards_found]\
                     .rank_diff, cards[cards_found].suit_diff = Cards.match_card(
                     cards[cards_found], train_ranks, train_suits)
-                print("RESULTS for: " + str(i))
-                print(cards[cards_found].best_rank_match, cards[cards_found].best_suit_match)
-                print(cards[cards_found].rank_diff, cards[cards_found].suit_diff)
+
+                #print("RESULTS for: " + str(i))
+                print(cards[cards_found])
+                cardDTO.suit = cards[cards_found].best_suit_match
+                cardDTO.value = cards[cards_found].best_rank_match
+                cardsArray.append(cardDTO())
+                #print(cards[cards_found].best_rank_match, cards[cards_found].best_suit_match)
+                #print(cards[cards_found].rank_diff, cards[cards_found].suit_diff)
                 j += 2
                 cards_found += 1
                 print("============================")
