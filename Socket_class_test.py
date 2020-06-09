@@ -1,6 +1,6 @@
 import json
 
-from Client_socket import Socket
+from Client_Socket import Socket
 from DTO.buildingTowerDTO import BuildingTowerDTO
 from DTO.cardDTO import CardDTO, CardEncoder
 from DTO.SolitaireDTO import SolitaireDTO, SolitaireEncoder
