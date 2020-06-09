@@ -1,6 +1,7 @@
 import socket
 import pickle
 import json
+import sys
 
 from DTO.buildingTowerDTO import BuildingTowerDTO
 from DTO.cardDTO import CardDTO, CardEncoder
@@ -19,6 +20,14 @@ class Socket:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((self.host, self.port))
         sock.sendall(bytes(data, encoding='utf-8'))
+        print("send")
+        sock.close()
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((self.host, self.port))
+        data = sock.recv(4096)
+        print(data.decode('utf-8'))
+
 
 
 # sock.sendall(b'Hello\r\n')
