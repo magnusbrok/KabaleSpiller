@@ -15,9 +15,6 @@ section_names = ["drawStack", "lastDraw", "1. Base stack", "2. base stack", "3. 
 
 def main():
 
-    # TODO: kan kort blive læst oppefra og ned?
-
-
     # Load the train rank and suit images
     path = os.path.dirname(os.path.abspath(__file__))
     train_ranks = Cards.load_ranks(path + '/Card_Imgs/')
@@ -34,7 +31,7 @@ def main():
     # cv2.imshow('frame-grayed', frame)
 
     # Standard prerpoccesing of input
-    dilate = Cards.preprocces_image(frame)
+    dilate = Cards.preprocess_imageOLD(frame)
 
     # contours, hierarchy = cv2.findContours(dilate, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     Cards.draw_board(print_frame)
@@ -47,10 +44,9 @@ def main():
     buildingTowerArray = []
     base_stack_array = []
     section_counter = 0
-    for i in range(0, 13):
+    for i in range(11, 12):
         section = sections[i]
         print_section = print_sections[i]
-        print_only = imutils.resize(print_section, 200, 140)
 
         contours, hierarchy = cv2.findContours(section, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
@@ -63,9 +59,6 @@ def main():
         # the contours have parents or not.
         for j in index_sort:
             cnts_sort.append(contours[j])
-
-
-        #print(len(cnts_sort))
 
         if len(cnts_sort) != 0:
             contour = cnts_sort[0]
@@ -83,14 +76,11 @@ def main():
             # Flatten the card and convert it to 200x300
             warp = Cards.flatten_stack(print_sections[i], pts, w, h)
 
-            print_warp = imutils.resize(warp, 240, 140)
-            print_warp = imutils.resize(warp, 240, 140)
 
             # cv2.imshow(str(i) + "warp", print_warp)
             edge_h = h  #  represents the bottom part of the first card
             edge_w = 50
-            corner_h = 160
-            edges = print_warp[0: edge_h, 5:edge_w]
+            edges = warp[0: edge_h, 0:edge_w]
 
             cv2.imshow(str(i), edges)
 
