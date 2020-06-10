@@ -45,8 +45,9 @@ def main():
     print_sections = Cards.cutout_board_sections(print_frame)
     cards = []
     buildingTowerArray = []
+    base_stack_array = []
     section_counter = 0
-    for i in range(6, 13):
+    for i in range(0, 13):
         section = sections[i]
         print_section = print_sections[i]
         print_only = imutils.resize(print_section, 200, 140)
@@ -138,17 +139,29 @@ def main():
                 # cardDTO.value = cards[cards_found].best_rank_match
                 cardsArray.append(cardDTO)
 
-                # Tilføjer array af cardDTO objekter til buildingTowerDTO.faceUpCards, er ikke 100% sikker på dette
-                # er den rigtige måde at gøre det på.
-                # TODO: tilføj så vi ved om der er face down kort eller ej
-                buildingTower = BuildingTowerDTO(faceDownCards=False, faceUpCards=cardsArray)
-                buildingTowerArray.append(buildingTower)
-                print(cardsArray[cards_found].value, cardsArray[cards_found].suit)
+                if i == 1:
+                    currentCard = cardDTO
+
+                if 1 < i < 6:
+                    base_stack_array.append(cardDTO)
+
+
+
+
                 # print(cards[cards_found].best_rank_match, cards[cards_found].best_suit_match)
                 # print(cards[cards_found].rank_diff, cards[cards_found].suit_diff)
+                print(cardsArray[cards_found].value, cardsArray[cards_found].suit)
                 j += 2
                 cards_found += 1
                 print("============================")
+
+            if 5 < i:
+                # Tilføjer array af cardDTO objekter til buildingTowerDTO.faceUpCards, er ikke 100% sikker på dette
+                # er den rigtige måde at gøre det på.
+                # TODO: tilføj så vi ved om der er face down kort eller ej
+                cardsArray = cardsArray[::-1]
+                buildingTower = BuildingTowerDTO(faceDownCards=False, faceUpCards=cardsArray)
+                buildingTowerArray.append(buildingTower)
 
         else:
             print("RESULTS for: " + str(i))
@@ -158,9 +171,8 @@ def main():
             #j += 2
             #cards_found += 1
             print("============================")
-    # TODO: send solitaire afsted gennem socket vha. json
     # TODO: implementer basestack og currentcard funktion
-    solitaire = SolitaireDTO(baseStack=[], currentCard=None, towers=buildingTowerArray)
+    solitaire = SolitaireDTO(baseStack=base_stack_array, currentCard=currentCard, towers=buildingTowerArray)
     data = json.dumps(solitaire, cls=SolitaireEncoder)
     socket = Socket("localhost", 8080)
     socket.send(data)
