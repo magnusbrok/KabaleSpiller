@@ -52,14 +52,14 @@ def preprocces_image(image):
     #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     #cv2.imshow("image", image)
-    #¤image = gray
+    #image = gray
     blur = cv2.GaussianBlur(image, (7, 7), 0)
     #cv2.imshow("blur", blur)
 
-    edges = cv2.Canny(blur, 120, 110)
+    edges = cv2.Canny(blur, 120, 180)
     #cv2.imshow("edges", edges)
 
-    kernel = np.ones((3, 3), np.uint8)
+    kernel = np.ones((2, 2), np.uint8)
     dilate = cv2.dilate(edges, kernel, iterations=1)
     #cv2.imshow("dilate", dilate)
 
@@ -145,7 +145,7 @@ def preprocess_imageOLD(image):
 
     # gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
     gray = image
-    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    blur = cv2.GaussianBlur(gray, (7, 7), 0)
 
 
     # The best threshold level depends on the ambient lighting conditions.
@@ -289,6 +289,8 @@ def preprocess_stack_card(rank_contour, suit_contour, image):
     qCard.rank_contour = rank_contour
     qCard.suit_contour = suit_contour
 
+    cv2.imshow("recived img", image)
+
 
     # Sample known white pixel intensity to determine good threshold level
     #white_level = Qcorner_zoom[15, int((CORNER_WIDTH * 4) / 2)]
@@ -296,11 +298,7 @@ def preprocess_stack_card(rank_contour, suit_contour, image):
     #if (thresh_level <= 0):
      #   thresh_level = 1
     retval, query_thresh = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY_INV)
-
-    # Split in to top and bottom half (top shows rank, bottom shows suit)
-    Qrank = query_thresh[20:185, 0:128]
-    Qsuit = query_thresh[186:336, 0:128]
-
+    cv2.imshow("thesh", query_thresh)
 
     # Find bounding rectangle for largest contour, use it to resize query rank
     # image to match dimensions of the train rank image
@@ -309,7 +307,7 @@ def preprocess_stack_card(rank_contour, suit_contour, image):
     Qrank_sized = cv2.resize(Qrank_roi, (RANK_WIDTH, RANK_HEIGHT), 0, 0)
     qCard.rank_img = Qrank_sized
 
-    #cv2.imshow("rank img", Qrank_sized)
+    cv2.imshow("rank img", Qrank_sized)
 
 
 
@@ -320,7 +318,7 @@ def preprocess_stack_card(rank_contour, suit_contour, image):
     Qsuit_roi = query_thresh[y2:y2 + h2, x2:x2 + w2]
     Qsuit_sized = cv2.resize(Qsuit_roi, (SUIT_WIDTH, SUIT_HEIGHT), 0, 0)
     qCard.suit_img = Qsuit_sized
-    #cv2.imshow("rank img", Qsuit_sized)
+    cv2.imshow("suit img", Qsuit_sized)
 
     return qCard
 
@@ -563,7 +561,7 @@ def cutout_board_sections(frame):
 
     for x in range(0, 7):
         image = frame[top_section_h:bot_section_h, bot_section_c_w * x:bot_section_c_w * (x + 1)]
-        sections.append(imutils.resize(image, 600, 480))
+        sections.append(image)
 
     # for i in range(0, len(sections)):
     # contours, heir = cv2.findContours(sections[i], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
