@@ -44,15 +44,16 @@ def main():
     buildingTowerArray = []
     base_stack_array = []
     section_counter = 0
-    for i in range(11, 12):
+    for i in range(7, 8):
         section = sections[i]
         print_section = print_sections[i]
 
-        contours, hierarchy = cv2.findContours(section, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        contours, hierarchy = cv2.findContours(section, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 
         cnts_sort = []
         index_sort = sorted(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]), reverse=True)
+
         # Fill empty lists with sorted contour and sorted hierarchy. Now,
         # the indices of the contour list still correspond with those of
         # the hierarchy list. The hierarchy array can be used to check if
@@ -65,30 +66,31 @@ def main():
             card = contour
 
 
-            # Approximate the corner points of the card
+            # Approximate the corner points of the card and flatten it
             peri = cv2.arcLength(card, True)
             approx = cv2.approxPolyDP(card, 0.01 * peri, True)
             pts = np.float32(approx)
-
             x, y, w, h = cv2.boundingRect(card)
-            gray_section = cv2.cvtColor(print_section, cv2.COLOR_BGR2GRAY)
-
             # Flatten the card and convert it to 200x300
-            warp = Cards.flatten_stack(print_sections[i], pts, w, h)
+            warp = Cards.flatten_stack(print_section, pts, w, h)
+            warp = imutils.resize(warp, 300)
 
+            cv2.imshow(str(i) + "warp", warp)
 
-            # cv2.imshow(str(i) + "warp", print_warp)
-            edge_h = h  #  represents the bottom part of the first card
-            edge_w = 50
-            edges = warp[0: edge_h, 0:edge_w]
+            edge_h = h*2  #  represents the bottom part of the first card
+            edge_w = 75
+            edges = warp[0: edge_h, 7:edge_w]
 
-            cv2.imshow(str(i), edges)
+            #cv2.imshow(str(i) + "normal", edges)
 
-            edges = imutils.resize(edges, 55)
+            #edges = imutils.resize(edges, 100)
+
+            #cv2.imshow(str(i) + "rezises", edges)
 
             edges_processed = Cards.preprocces_image(edges)
-            cv2.imshow(str(i), edges_processed)
-            contours, hierarchy = cv2.findContours(edges_processed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+            cv2.imshow(str(i) + "processed", edges_processed)
+
+            contours, hierarchy = cv2.findContours(edges_processed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             filtered_contours = []
             for cnt in contours:
                 area = cv2.contourArea(cnt)

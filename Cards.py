@@ -49,14 +49,14 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 
 def preprocces_image(image):
     # cv2.imshow('Card class recieved image', image)
-    #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     #cv2.imshow("image", image)
-    #image = gray
-    blur = cv2.GaussianBlur(image, (7, 7), 0)
+    image = gray
+    blur = cv2.GaussianBlur(image, (5, 5), 0)
     #cv2.imshow("blur", blur)
 
-    edges = cv2.Canny(blur, 120, 180)
+    edges = cv2.Canny(blur, 120, 200)
     #cv2.imshow("edges", edges)
 
     kernel = np.ones((2, 2), np.uint8)
