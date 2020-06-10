@@ -20,8 +20,8 @@ RANK_HEIGHT = 125
 SUIT_WIDTH = 70
 SUIT_HEIGHT = 100
 
-#cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture('http://192.168.1.135:4905/video')
+cap = cv2.VideoCapture(1)
+#cap = cv2.VideoCapture('http://192.168.1.135:4905/video')
 
 # Use counter variable to switch from isolating Rank to isolating Suit
 i = 1
