@@ -11,16 +11,15 @@ import imutils
 import numpy as np
 import cv2
 import time
-
 ### Constants ###
 
 # Videofeed dimensions
 feed_width = 1600
-feed_hight = 1600
+feed_hight = 1200
 # constrant used for defining sections of the gameboard
-top_section_h = int(feed_hight * 0.15625)
+top_section_h = int(feed_hight * 0.175)
 top_section_c_w = int(feed_width / 6)
-bot_section_h = feed_hight - top_section_h
+bot_section_h = feed_hight
 bot_section_c_w = int(feed_width / 7)
 
 # Adaptive threshold levels
@@ -50,10 +49,10 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 
 def preprocces_image(image):
     # cv2.imshow('Card class recieved image', image)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     #cv2.imshow("image", image)
-    image = gray
+    #¤image = gray
     blur = cv2.GaussianBlur(image, (7, 7), 0)
     #cv2.imshow("blur", blur)
 
@@ -147,6 +146,7 @@ def preprocess_imageOLD(image):
     # gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
     gray = image
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
+
 
     # The best threshold level depends on the ambient lighting conditions.
     # For bright lighting, a high threshold must be used to isolate the cards

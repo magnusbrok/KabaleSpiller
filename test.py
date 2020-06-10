@@ -1,8 +1,9 @@
 import cv2
-
+import imutils
 import Cards
 
-cam = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
+
 
 cv2.namedWindow("test")
 #cam = cv2.VideoCapture('http://192.168.1.135:4905/video')
@@ -12,13 +13,27 @@ cv2.namedWindow("test")
 img_counter = 0
 
 while True:
-    ret, frame = cam.read()
+    ret, frame = cap.read()
+    #cv2.imshow("org img" , frame)
+
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  # float
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) # float
+
+    print_frame = frame[20:height, 650:width-650]
+    save_frame = frame[20:height, 650:width-650]
+
+    print_frame = cv2.resize(print_frame, (Cards.feed_width, Cards.feed_hight))
+    save_frame = cv2.resize(save_frame, (Cards.feed_width, Cards.feed_hight))
+
+
+
+
     if not ret:
         print("failed to grab frame")
         break
-    showFrame = frame
-    Cards.draw_board(showFrame)
-    cv2.imshow("test", showFrame)
+
+    Cards.draw_board(print_frame)
+    cv2.imshow("test", print_frame)
 
     k = cv2.waitKey(1)
     if k%256 == 27:
@@ -28,11 +43,10 @@ while True:
     elif k%256 == 32:
         # SPACE pressed
         img_name = "opencv_frame_{}.png".format(img_counter)
-        frame = cv2.resize(frame, (0,0), fx=3, fy=3)
-        cv2.imwrite(img_name, frame)
+        cv2.imwrite(img_name, save_frame)
         print("{} written!".format(img_name))
         img_counter += 1
 
-cam.release()
+cap.release()
 
 cv2.destroyAllWindows()

@@ -8,12 +8,18 @@ import Cards
 
 def main():
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
+
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
     #cap = cv2.VideoCapture('http://192.168.1.135:4905/video')
     while True:
 
         ret, frame = cap.read()
         cv2.imshow("Card",frame)
+        #img = cv2.imread(frame, 0)
+
         key = cv2.waitKey(1) & 0xFF
         if key == ord("p"):
             image = frame
@@ -21,11 +27,12 @@ def main():
 
     while True:
         ret, frame = cap.read()
-        frame = cv2.rotate(frame, cv2.ROTATE_180) # Only relevant for Magnus
+        #frame = cv2.rotate(frame, cv2.ROTATE_180) # Only relevant for Magnus
         cv2.imshow("tesss", frame)
-        frame = imutils.resize(frame, Cards.feed_width, Cards.feed_hight)
+        #frame = imutils.resize(frame, Cards.feed_width, Cards.feed_hight)
         cv2.imshow("test", frame)
-        #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        cv2.imshow("gray", gray)
 
         dilate = Cards.preprocces_image(frame)
 

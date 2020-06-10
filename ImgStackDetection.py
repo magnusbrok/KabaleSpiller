@@ -12,7 +12,7 @@ from DTO.cardDTO import CardDTO
 
 section_names = ["drawStack", "lastDraw", "1. Base stack", "2. base stack", "3. Base stack", "4. Base stack",
                  "1. tower", "2. tower", "3. tower", "4. tower", "5. tower", "6. tower", "7. tower"]
-IMG_size = 1600
+
 def main():
 
     # TODO: kan kort blive læst oppefra og ned?
@@ -23,23 +23,23 @@ def main():
     train_ranks = Cards.load_ranks(path + '/Card_Imgs/')
     train_suits = Cards.load_suits(path + '/Card_Imgs/')
 
-    cardPath = 'Training-Imgs/kabale_1.jpg'
+    cardPath = 'Training-Imgs/opencv_frame_4.png'
 
     print_img = cv2.imread(cardPath)
-    print_frame = imutils.resize(print_img, IMG_size, IMG_size)
+    print_frame = imutils.resize(print_img, Cards.feed_width, Cards.feed_hight)
 
     image = cv2.imread(cardPath, cv2.IMREAD_GRAYSCALE)
-    frame = imutils.resize(image, IMG_size, IMG_size)
+    frame = imutils.resize(image, Cards.feed_width, Cards.feed_hight)
 
     # cv2.imshow('frame-grayed', frame)
 
     # Standard prerpoccesing of input
-    dilate = Cards.preprocess_imageOLD(frame)
+    dilate = Cards.preprocces_image(frame)
 
     # contours, hierarchy = cv2.findContours(dilate, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     Cards.draw_board(print_frame)
     cv2.imshow("printframe", print_frame)
-    #cv2.imshow('Dialated', dilate)
+    cv2.imshow('Dialated', dilate)
 
     sections = Cards.cutout_board_sections(dilate)
     print_sections = Cards.cutout_board_sections(print_frame)
@@ -71,6 +71,7 @@ def main():
             contour = cnts_sort[0]
             card = contour
 
+
             # Approximate the corner points of the card
             peri = cv2.arcLength(card, True)
             approx = cv2.approxPolyDP(card, 0.01 * peri, True)
@@ -91,7 +92,7 @@ def main():
             corner_h = 160
             edges = print_warp[0: edge_h, 5:edge_w]
 
-            #cv2.imshow(str(i), edges)
+            cv2.imshow(str(i), edges)
 
             edges = imutils.resize(edges, 55)
 
@@ -172,10 +173,11 @@ def main():
             #cards_found += 1
             print("============================")
     # TODO: implementer basestack og currentcard funktion
-    solitaire = SolitaireDTO(baseStack=base_stack_array, currentCard=currentCard, towers=buildingTowerArray)
-    data = json.dumps(solitaire, cls=SolitaireEncoder)
-    socket = Socket("localhost", 8080)
-    socket.send(data)
+
+    #solitaire = SolitaireDTO(baseStack=base_stack_array, currentCard=currentCard, towers=buildingTowerArray)
+    #data = json.dumps(solitaire, cls=SolitaireEncoder)
+    #socket = Socket("localhost", 8080)
+    #socket.send(data)
 
 
 
