@@ -38,8 +38,8 @@ RANK_HEIGHT = 125
 SUIT_WIDTH = 70
 SUIT_HEIGHT = 100
 
-RANK_DIFF_MAX = 2300
-SUIT_DIFF_MAX = 1700
+RANK_DIFF_MAX = 3000
+SUIT_DIFF_MAX = 2500
 
 CARD_MAX_AREA = 120000
 CARD_MIN_AREA = 25000
@@ -60,7 +60,7 @@ def preprocces_image(image):
     #cv2.imshow("edges", edges)
 
     kernel = np.ones((2, 2), np.uint8)
-    dilate = cv2.dilate(edges, kernel, iterations=1)
+    dilate = cv2.dilate(edges, kernel, iterations=2)
     #cv2.imshow("dilate", dilate)
 
     return dilate
@@ -161,7 +161,7 @@ def preprocess_imageOLD(image):
     bkg_level = gray[int(img_h / 100)][int(img_w / 2)]
     thresh_level = bkg_level + BKG_THRESH
 
-    retval, thresh = cv2.threshold(blur, thresh_level, 255, cv2.THRESH_BINARY)
+    retval, thresh = cv2.threshold(blur, 160, 255, cv2.THRESH_BINARY)
 
     return thresh
 
@@ -218,6 +218,8 @@ def preprocess_card(contour, image):
 
     qCard.contour = contour
 
+    cv2.imshow("recieved img", image)
+
     # Find perimeter of card and use it to approximate corner points
     peri = cv2.arcLength(contour, True)
     approx = cv2.approxPolyDP(contour, 0.01 * peri, True)
@@ -236,6 +238,7 @@ def preprocess_card(contour, image):
 
     # Warp card into 200x300 flattened image using perspective transform
     qCard.warp = flattener(image, pts, w, h)
+    cv2.imshow("r_warp", qCard.warp)
 
     # Grab corner of warped card image and do a 4x zoom
     Qcorner = qCard.warp[0:CORNER_HEIGHT, 0:CORNER_WIDTH]
@@ -250,7 +253,10 @@ def preprocess_card(contour, image):
 
     # Split in to top and bottom half (top shows rank, bottom shows suit)
     Qrank = query_thresh[20:185, 0:128]
+    cv2.imshow("Qrank", Qrank)
     Qsuit = query_thresh[186:336, 0:128]
+    cv2.imshow("QSuit", Qsuit)
+
 
     # Find rank contour and bounding rectangle, isolate and find largest contour
     Qrank_cnts, hier = cv2.findContours(Qrank, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -263,6 +269,8 @@ def preprocess_card(contour, image):
         Qrank_roi = Qrank[y1:y1 + h1, x1:x1 + w1]
         Qrank_sized = cv2.resize(Qrank_roi, (RANK_WIDTH, RANK_HEIGHT), 0, 0)
         qCard.rank_img = Qrank_sized
+        cv2.imshow("rankfound", Qrank_sized)
+
 
     # Find suit contour and bounding rectangle, isolate and find largest contour
     Qsuit_cnts, hier = cv2.findContours(Qsuit, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -275,6 +283,8 @@ def preprocess_card(contour, image):
         Qsuit_roi = Qsuit[y2:y2 + h2, x2:x2 + w2]
         Qsuit_sized = cv2.resize(Qsuit_roi, (SUIT_WIDTH, SUIT_HEIGHT), 0, 0)
         qCard.suit_img = Qsuit_sized
+        cv2.imshow("suitfound", Qsuit_sized)
+
 
     return qCard
 
@@ -297,7 +307,7 @@ def preprocess_stack_card(rank_contour, suit_contour, image):
     #thresh_level = white_level - CARD_THRESH
     #if (thresh_level <= 0):
      #   thresh_level = 1
-    retval, query_thresh = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY_INV)
+    retval, query_thresh = cv2.threshold(image, 180, 255, cv2.THRESH_BINARY_INV)
     cv2.imshow("thesh", query_thresh)
 
     # Find bounding rectangle for largest contour, use it to resize query rank
@@ -470,6 +480,29 @@ def flattener(image, pts, w, h):
 
     return warp
 
+def sort_contours(contours):
+    cnts_sort = []
+    index_sort = sorted(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]), reverse=True)
+
+    # Fill empty lists with sorted contour and sorted hierarchy. Now,
+    # the indices of the contour list still correspond with those of
+    # the hierarchy list. The hierarchy array can be used to check if
+    # the contours have parents or not.
+    for j in index_sort:
+        cnts_sort.append(contours[j])
+
+    return cnts_sort
+
+def find_card_contour(thresh):
+    card_sized_contours = []
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    for cnt in contours:
+        print("cnt area " + str(cv2.contourArea(cnt)))
+        if 15000 > cv2.contourArea(cnt) > 500:
+            print("added cnt:" + str(cv2.contourArea(cnt)))
+            card_sized_contours.append(cnt)
+
+    return card_sized_contours
 
 def flatten_stack(image, pts, w, h):
     """Flattens an image of a cardstack into a top-down 200x300 perspective.

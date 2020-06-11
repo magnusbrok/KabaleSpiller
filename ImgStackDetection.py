@@ -21,6 +21,9 @@ def main():
     train_suits = Cards.load_suits(path + '/Card_Imgs/')
 
     cardPath = 'Training-Imgs/opencv_frame_4.png'
+    cardPath = 'Training-Imgs/test_billeder.png'
+
+
 
     print_img = cv2.imread(cardPath)
     print_frame = imutils.resize(print_img, Cards.feed_width, Cards.feed_hight)
@@ -44,28 +47,16 @@ def main():
     buildingTowerArray = []
     base_stack_array = []
     section_counter = 0
-    for i in range(7, 8):
+    for i in range(6, 12):
         section = sections[i]
         print_section = print_sections[i]
 
         contours, hierarchy = cv2.findContours(section, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-
-        cnts_sort = []
-        index_sort = sorted(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]), reverse=True)
-
-        # Fill empty lists with sorted contour and sorted hierarchy. Now,
-        # the indices of the contour list still correspond with those of
-        # the hierarchy list. The hierarchy array can be used to check if
-        # the contours have parents or not.
-        for j in index_sort:
-            cnts_sort.append(contours[j])
-
+        cnts_sort = Cards.sort_contours(contours)
         if len(cnts_sort) != 0:
             contour = cnts_sort[0]
             card = contour
-
-
             # Approximate the corner points of the card and flatten it
             peri = cv2.arcLength(card, True)
             approx = cv2.approxPolyDP(card, 0.01 * peri, True)
@@ -73,13 +64,26 @@ def main():
             x, y, w, h = cv2.boundingRect(card)
             # Flatten the card and convert it to 200x300
             warp = Cards.flatten_stack(print_section, pts, w, h)
+
+
+            #testImg = Cards.flatten_stack(image, 100, Cards.feed_width, Cards.feed_hight)
+            #cv2.imshow("testeer", testImg)
             warp = imutils.resize(warp, 300)
+
 
             cv2.imshow(str(i) + "warp", warp)
 
             edge_h = h*2  #  represents the bottom part of the first card
-            edge_w = 75
-            edges = warp[0: edge_h, 7:edge_w]
+            edge_w = 50
+            edge_indent = 5
+            edges = warp[0: edge_h, edge_indent:edge_w]
+
+            warp = Cards.flatten_stack(print_section, pts, w, h)
+            warp = imutils.resize(warp, 300)
+            print_edges = warp[0: edge_h, edge_indent:edge_w]
+            #edges = imutils.resize(edges, 75)
+            #print_edges = imutils.resize(print_edges, 75)
+            cv2.imshow("wdaw", print_edges)
 
             #cv2.imshow(str(i) + "normal", edges)
 
@@ -88,23 +92,30 @@ def main():
             #cv2.imshow(str(i) + "rezises", edges)
 
             edges_processed = Cards.preprocces_image(edges)
-            cv2.imshow(str(i) + "processed", edges_processed)
+            #cv2.imshow(str(i) + "processed", edges_processed)
+
 
             contours, hierarchy = cv2.findContours(edges_processed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             filtered_contours = []
             for cnt in contours:
+                x, y, w, h = cv2.boundingRect(cnt)
+                area = w*h
                 area = cv2.contourArea(cnt)
                 #print(cv2.contourArea(cnt))
                 if area >= 200:
                     print(str(i) + "cnt Area = " + str(area))
                     filtered_contours.append(cnt)
                     x, y, w, h = cv2.boundingRect(cnt)
-                    cv2.rectangle(edges, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    cv2.rectangle(print_edges, (x, y), (x + w, y + h), (0, 255, 0), 1)
             #cv2.drawContours(edges, filtered_contours, -1, (255, 0, 0), 2)
-            cv2.imshow(str(i) + "Edges", edges)
+            cv2.imshow(str(i) + "printimg", print_edges)
+
+
             gray_section = cv2.cvtColor(edges, cv2.COLOR_BGR2GRAY)
+            #cv2.imshow("greaaa", gray_section)
             kernel = np.ones((2, 2), np.uint8)
-            dilate = cv2.erode(gray_section, kernel, iterations=1)
+            dilate = cv2.erode(gray_section, kernel, iterations=2)
+
 
 
 
@@ -142,7 +153,7 @@ def main():
 
 
                 # print(cards[cards_found].best_rank_match, cards[cards_found].best_suit_match)
-                # print(cards[cards_found].rank_diff, cards[cards_found].suit_diff)
+                print(cards[cards_found].rank_diff, cards[cards_found].suit_diff)
                 print(cardsArray[cards_found].value, cardsArray[cards_found].suit)
                 j += 2
                 cards_found += 1
