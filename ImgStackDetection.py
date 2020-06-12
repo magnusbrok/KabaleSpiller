@@ -177,10 +177,7 @@ def main():
             print("============================")
     # TODO: implementer basestack og currentcard funktion
 
-    #solitaire = SolitaireDTO(baseStack=base_stack_array, currentCard=currentCard, towers=buildingTowerArray)
-    #data = json.dumps(solitaire, cls=SolitaireEncoder)
-    #socket = Socket("localhost", 8080)
-    #socket.send(data)
+
 
 
 

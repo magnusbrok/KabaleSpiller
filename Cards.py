@@ -7,10 +7,17 @@
 
 
 # Import necessary packages
+import json
+
 import imutils
 import numpy as np
 import cv2
 import time
+from Client_socket import Socket
+from DTO.SolitaireDTO import SolitaireDTO, SolitaireEncoder
+from DTO.buildingTowerDTO import BuildingTowerDTO
+from DTO.cardDTO import CardDTO
+
 ### Constants ###
 
 # Videofeed dimensions
@@ -51,17 +58,17 @@ def preprocces_image(image):
     # cv2.imshow('Card class recieved image', image)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    #cv2.imshow("image", image)
+    # cv2.imshow("image", image)
     image = gray
     blur = cv2.GaussianBlur(image, (5, 5), 0)
-    #cv2.imshow("blur", blur)
+    # cv2.imshow("blur", blur)
 
     edges = cv2.Canny(blur, 120, 200)
-    #cv2.imshow("edges", edges)
+    # cv2.imshow("edges", edges)
 
     kernel = np.ones((2, 2), np.uint8)
     dilate = cv2.dilate(edges, kernel, iterations=2)
-    #cv2.imshow("dilate", dilate)
+    # cv2.imshow("dilate", dilate)
 
     return dilate
 
@@ -146,7 +153,6 @@ def preprocess_imageOLD(image):
     # gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
     gray = image
     blur = cv2.GaussianBlur(gray, (7, 7), 0)
-
 
     # The best threshold level depends on the ambient lighting conditions.
     # For bright lighting, a high threshold must be used to isolate the cards
@@ -257,7 +263,6 @@ def preprocess_card(contour, image):
     Qsuit = query_thresh[186:336, 0:128]
     cv2.imshow("QSuit", Qsuit)
 
-
     # Find rank contour and bounding rectangle, isolate and find largest contour
     Qrank_cnts, hier = cv2.findContours(Qrank, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     Qrank_cnts = sorted(Qrank_cnts, key=cv2.contourArea, reverse=True)
@@ -271,7 +276,6 @@ def preprocess_card(contour, image):
         qCard.rank_img = Qrank_sized
         cv2.imshow("rankfound", Qrank_sized)
 
-
     # Find suit contour and bounding rectangle, isolate and find largest contour
     Qsuit_cnts, hier = cv2.findContours(Qsuit, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     Qsuit_cnts = sorted(Qsuit_cnts, key=cv2.contourArea, reverse=True)
@@ -284,7 +288,6 @@ def preprocess_card(contour, image):
         Qsuit_sized = cv2.resize(Qsuit_roi, (SUIT_WIDTH, SUIT_HEIGHT), 0, 0)
         qCard.suit_img = Qsuit_sized
         cv2.imshow("suitfound", Qsuit_sized)
-
 
     return qCard
 
@@ -301,12 +304,11 @@ def preprocess_stack_card(rank_contour, suit_contour, image):
 
     cv2.imshow("recived img", image)
 
-
     # Sample known white pixel intensity to determine good threshold level
-    #white_level = Qcorner_zoom[15, int((CORNER_WIDTH * 4) / 2)]
-    #thresh_level = white_level - CARD_THRESH
-    #if (thresh_level <= 0):
-     #   thresh_level = 1
+    # white_level = Qcorner_zoom[15, int((CORNER_WIDTH * 4) / 2)]
+    # thresh_level = white_level - CARD_THRESH
+    # if (thresh_level <= 0):
+    #   thresh_level = 1
     retval, query_thresh = cv2.threshold(image, 180, 255, cv2.THRESH_BINARY_INV)
     cv2.imshow("thesh", query_thresh)
 
@@ -318,8 +320,6 @@ def preprocess_stack_card(rank_contour, suit_contour, image):
     qCard.rank_img = Qrank_sized
 
     cv2.imshow("rank img", Qrank_sized)
-
-
 
     # Find bounding rectangle for largest contour, use it to resize query suit
     # image to match dimensions of the train suit image
@@ -480,6 +480,7 @@ def flattener(image, pts, w, h):
 
     return warp
 
+
 def sort_contours(contours):
     cnts_sort = []
     index_sort = sorted(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]), reverse=True)
@@ -493,6 +494,7 @@ def sort_contours(contours):
 
     return cnts_sort
 
+
 def find_card_contour(thresh):
     card_sized_contours = []
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -503,6 +505,7 @@ def find_card_contour(thresh):
             card_sized_contours.append(cnt)
 
     return card_sized_contours
+
 
 def flatten_stack(image, pts, w, h):
     """Flattens an image of a cardstack into a top-down 200x300 perspective.
@@ -602,3 +605,9 @@ def cutout_board_sections(frame):
     # cv2.imshow(str(i), sections[i])
 
     return sections
+
+
+def send_game(solitaire):
+    data = json.dumps(solitaire, cls=SolitaireEncoder)
+    socket = Socket("localhost", 8080)
+    socket.send(data)
