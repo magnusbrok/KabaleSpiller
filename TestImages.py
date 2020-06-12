@@ -1,6 +1,6 @@
 import cv2
 import imutils
-import Cards
+from Detection import Cards
 
 
 # Used for checking image processing and find countours works on different card setups pr 17/04 everything works as

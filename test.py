@@ -1,6 +1,5 @@
 import cv2
-import imutils
-import Cards
+from Detection import Cards
 
 cap = cv2.VideoCapture(1)
 

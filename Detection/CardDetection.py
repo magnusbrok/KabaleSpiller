@@ -1,9 +1,6 @@
 import cv2
-import imutils
-import numpy as np
-import os
 
-import Cards
+from Detection import Cards
 
 
 def main():

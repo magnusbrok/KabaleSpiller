@@ -2,11 +2,8 @@ import cv2
 import imutils
 import numpy as np
 import os
-import json
 
-import Cards
-from Client_socket import Socket
-from DTO.SolitaireDTO import SolitaireDTO, SolitaireEncoder
+from Detection import Cards
 from DTO.buildingTowerDTO import BuildingTowerDTO
 from DTO.cardDTO import CardDTO
 
@@ -130,7 +127,7 @@ def main():
             cards_found = 0
             print("=======================")
             while j < len(filtered_contours)-1:
-                cards.append(Cards.preprocess_stack_card(filtered_contours[j+1], filtered_contours[j], dilate))
+                cards.append(Cards.preprocess_stack_card(filtered_contours[j + 1], filtered_contours[j], dilate))
 
                 cards[cards_found].best_rank_match, cards[cards_found].best_suit_match, cards[cards_found]\
                     .rank_diff, cards[cards_found].suit_diff = Cards.match_card(

@@ -5,8 +5,7 @@
 # Import necessary packages
 import cv2
 import numpy as np
-import time
-import Cards
+from Detection import Cards
 import os
 
 img_path = os.path.dirname(os.path.abspath(__file__)) + '/Card_Imgs/'
@@ -76,7 +75,7 @@ for Name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight',
     x,y,w,h = cv2.boundingRect(card)
 
     # Flatten the card and convert it to 200x300
-    warp = Cards.flattener(image,pts,w,h)
+    warp = Cards.flattener(image, pts, w, h)
     cv2.imshow("warp", warp)
 
     # Grab corner of card image, zoom, and threshold

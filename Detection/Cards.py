@@ -12,11 +12,8 @@ import json
 import imutils
 import numpy as np
 import cv2
-import time
-from Client_socket import Socket
-from DTO.SolitaireDTO import SolitaireDTO, SolitaireEncoder
-from DTO.buildingTowerDTO import BuildingTowerDTO
-from DTO.cardDTO import CardDTO
+from Socket.Client_socket import Socket
+from DTO.SolitaireDTO import SolitaireEncoder
 
 ### Constants ###
 
