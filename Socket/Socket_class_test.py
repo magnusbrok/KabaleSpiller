@@ -9,11 +9,13 @@ card = CardDTO('C', 3)
 print(card)
 
 tower = [card, CardDTO('D', 10)]
-buildingTower = BuildingTowerDTO(True, tower)
+buildingTower = BuildingTowerDTO(False, tower)
 
-towers = [buildingTower, buildingTower]
+buildingTower1 = BuildingTowerDTO(False, [])
 
-solitaire = SolitaireDTO(card, towers, {'C': card, 'D': CardDTO('D', 5)})
+towers = [buildingTower, buildingTower1, buildingTower]
+
+solitaire = SolitaireDTO(None, towers, [card, CardDTO('D', 5)])
 print(solitaire)
 
 data1 = json.dumps(solitaire, cls=SolitaireEncoder)
@@ -22,5 +24,4 @@ data_socket = Socket('localhost', 8080)
 
 data_socket.send(data1)
 data_socket.receive()
-
 
