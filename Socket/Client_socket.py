@@ -21,4 +21,6 @@ class Socket:
         data = sock.recv(4096)
         sock.close()
         print("Data received")
-        print(data.decode('utf-8'))
+        msg = data.decode('utf-8')
+        print(msg)
+        return msg
