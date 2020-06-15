@@ -608,3 +608,4 @@ def send_game(solitaire):
     data = json.dumps(solitaire, cls=SolitaireEncoder)
     socket = Socket("localhost", 8080)
     socket.send(data)
+    socket.receive()
