@@ -40,6 +40,16 @@ for Name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight',
     while True:
 
         ret, frame = cap.read()
+
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  # float
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))  # float
+
+        print_frame = frame[20:int(height/2), 650*2:width - 650*2]
+        save_frame = frame[20:int(height/2), 650*2:width - 650*2]
+
+        image = cv2.resize(print_frame, (Cards.feed_width, Cards.feed_hight))
+        frame = cv2.resize(save_frame, (Cards.feed_width, Cards.feed_hight))
+
         cv2.imshow("Card",frame)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("p"):
@@ -79,7 +89,7 @@ for Name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight',
     cv2.imshow("warp", warp)
 
     # Grab corner of card image, zoom, and threshold
-    corner = warp[0:84, 0:32]
+    corner = warp[0:Cards.CORNER_HEIGHT, 0:Cards.CORNER_WIDTH]
     #corner_gray = cv2.cvtColor(corner,cv2.COLOR_BGR2GRAY)
     corner_zoom = cv2.resize(corner, (0,0), fx=4, fy=4)
     gray_corner = cv2.cvtColor(corner_zoom,cv2.COLOR_BGR2GRAY)
@@ -90,7 +100,9 @@ for Name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight',
 
     # Isolate suit or rank
     if i <= 13: # Isolate rank
-        rank = corner_thresh[20:185, 0:128] # Grabs portion of image that shows rank
+        rank = corner_thresh[Cards.rank_y_offset:Cards.rank_y_endpoint,
+               Cards.rank_x_offset:Cards.rank_x_endpoint]
+        # Grabs portion of image that shows rank
         cv2.imshow("rank", rank)
 
         rank_cnts, hier = cv2.findContours(rank, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
@@ -99,11 +111,13 @@ for Name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight',
         rank_roi = rank[y:y+h, x:x+w]
         rank_sized = cv2.resize(rank_roi, (RANK_WIDTH, RANK_HEIGHT), 0, 0)
         final_img = rank_sized
+        #cv2.imshow("fianl", final_img)
 
     if i > 13: # Isolate suit
-        suit = corner_thresh[186:336, 0:128] # Grabs portion of image that shows suit
+        suit = corner_thresh[Cards.suit_y_offset:Cards.suit_y_endpoint,
+               Cards.suit_x_offset:Cards.rank_y_endpoint] # Grabs portion of image that shows suit
         cv2.imshow("suit", suit)
-
+       
         suit_cnts, hier = cv2.findContours(suit, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
         suit_cnts = sorted(suit_cnts, key=cv2.contourArea,reverse=True)
         x,y,w,h = cv2.boundingRect(suit_cnts[0])

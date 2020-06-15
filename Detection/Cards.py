@@ -31,8 +31,20 @@ BKG_THRESH = 60
 CARD_THRESH = 30
 
 # Width and height of card corner, where rank and suit are
-CORNER_WIDTH = 32
-CORNER_HEIGHT = 84
+CORNER_WIDTH = 55
+CORNER_HEIGHT = 140
+
+# rank dimension
+rank_y_offset = 20
+rank_y_endpoint = 250
+rank_x_offset = 0
+rank_x_endpoint = 190
+
+# suit dimensions
+suit_y_offset = rank_y_endpoint + 1
+suit_y_endpoint = 600
+suit_x_offset = 0
+suit_x_endpoint = rank_x_endpoint
 
 # Dimensions of rank train images
 RANK_WIDTH = 70
@@ -254,11 +266,16 @@ def preprocess_card(contour, image):
         thresh_level = 1
     retval, query_thresh = cv2.threshold(Qcorner_zoom, thresh_level, 255, cv2.THRESH_BINARY_INV)
 
+
+
     # Split in to top and bottom half (top shows rank, bottom shows suit)
-    Qrank = query_thresh[20:185, 0:128]
+    Qrank = query_thresh[rank_y_offset:rank_y_endpoint, rank_x_offset:rank_x_endpoint]
     cv2.imshow("Qrank", Qrank)
-    Qsuit = query_thresh[186:336, 0:128]
+    Qsuit = query_thresh[suit_y_offset:suit_y_endpoint, suit_x_offset:suit_x_endpoint]
     cv2.imshow("QSuit", Qsuit)
+
+
+
 
     # Find rank contour and bounding rectangle, isolate and find largest contour
     Qrank_cnts, hier = cv2.findContours(Qrank, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
