@@ -115,11 +115,24 @@ def main():
                 except:
                     print("no card found")
 
-                section_counter += 1
                 cards_found += 1
 
+            if len(contours) == 0:
+
+                if i == 1:
+                    currentCard = None
+                if 5 < i:
+                    tower_card_array = []
+                    buildingTower = BuildingTowerDTO(faceDownCards=False, faceUpCards=tower_card_array)
+                    buildingTowerArray.append(buildingTower)
+                print("============================")
+                print("RESULTS for: " + str(i))
+                print("no card found")
+            section_counter += 1
+
+
         solitaire = SolitaireDTO(baseStack=base_stack_array, currentCard=currentCard, towers=buildingTowerArray)
-        Cards.send_game(solitaire)
+        #Cards.send_game(solitaire)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
