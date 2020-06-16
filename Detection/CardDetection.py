@@ -3,6 +3,7 @@ import imutils
 import os
 
 import numpy as np
+from pip._vendor.distlib.compat import raw_input
 
 from Detection import Cards
 from DTO.SolitaireDTO import SolitaireDTO
@@ -43,7 +44,7 @@ def main():
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         dilate = Cards.preprocess_imageOLD(gray)
 
-        cv2.imshow("dilate", dilate)
+        #cv2.imshow("dilate", dilate)
 
         sections = Cards.cutout_board_sections(dilate)
         print_sections = Cards.cutout_board_sections(frame)
@@ -60,7 +61,7 @@ def main():
             printable_section = print_sections[i]
             contours, hierarchy = cv2.findContours(section, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-            print(len(contours))
+            #print(len(contours))
 
             if len(contours) != 0:
                 cnt = contours[0]
@@ -91,6 +92,7 @@ def main():
                 cardDTO = CardDTO(value=qcards[cards_found].best_rank_match, suit=qcards[cards_found].best_suit_match)
 
 
+
                 if i == 1:
                     currentCard = cardDTO
 
@@ -105,15 +107,15 @@ def main():
                     buildingTowerArray.append(buildingTower)
 
                 found_card = qcards[cards_found]
-                print("============================")
-                print("RESULTS for: " + str(i))
-                print(str(found_card.best_rank_match) + str(found_card.best_suit_match))
-                print("Rank diff: " + str(found_card.rank_diff) + " Suit Diff: " + str(found_card.suit_diff))
-                try:
-                    cv2.imshow(str(section_counter) + "rank", found_card.rank_img)
-                    cv2.imshow(str(section_counter) + "card suit", found_card.suit_img)
-                except:
-                    print("no card found")
+              #  print("============================")
+              #  print("RESULTS for: " + str(i))
+              #  print(str(found_card.best_rank_match) + str(found_card.best_suit_match))
+              #  print("Rank diff: " + str(found_card.rank_diff) + " Suit Diff: " + str(found_card.suit_diff))
+                #try:
+                    #cv2.imshow(str(section_counter) + "rank", found_card.rank_img)
+                    #cv2.imshow(str(section_counter) + "card suit", found_card.suit_img)
+                #except:
+                   # print("no card found")
 
                 cards_found += 1
 
@@ -125,14 +127,53 @@ def main():
                     tower_card_array = []
                     buildingTower = BuildingTowerDTO(faceDownCards=False, faceUpCards=tower_card_array)
                     buildingTowerArray.append(buildingTower)
-                print("============================")
-                print("RESULTS for: " + str(i))
-                print("no card found")
+               # print("============================")
+               # print("RESULTS for: " + str(i))
+               # print("no card found")
             section_counter += 1
 
-
         solitaire = SolitaireDTO(baseStack=base_stack_array, currentCard=currentCard, towers=buildingTowerArray)
-        #Cards.send_game(solitaire)
+        top_row_string = "CurrCard: "
+        if currentCard != None:
+            top_row_string += str(currentCard.value)
+            top_row_string += str(currentCard.suit)
+            top_row_string += " |  "
+        else:
+            top_row_string += "XX"
+            top_row_string += " |  "
+        for i in range(0, 4):
+            if len(base_stack_array) > i:
+                cardDTO = base_stack_array[i]
+                top_row_string += str(cardDTO.value)
+                top_row_string += str(cardDTO.suit)
+                top_row_string += "   "
+            else:
+                top_row_string += "XX"
+                top_row_string += "   "
+
+        tower_string = ""
+        for tower in buildingTowerArray:
+            cardDTO = CardDTO
+            if len(tower.faceUpCards) > 0:
+                cardDTO = tower.faceUpCards[0]
+                tower_string += str(cardDTO.value)
+                tower_string += str(cardDTO.suit)
+                tower_string += "   "
+            else:
+                tower_string += "XX"
+                tower_string += "   "
+        print("========  RESULTS OF SCAN ========")
+        print(top_row_string)
+        print(tower_string)
+
+        print()
+
+        input_char = input("Was the scan correct? [Y/N]")
+        input_char = input_char.lower()
+        if input_char == "y":
+            Cards.send_game(solitaire)
+        if input_char == "n":
+            print("Tryk p for at tage et nyt billedet")
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

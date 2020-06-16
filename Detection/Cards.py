@@ -14,6 +14,9 @@ import numpy as np
 import cv2
 from Socket.Client_socket import Socket
 from DTO.SolitaireDTO import SolitaireEncoder
+from DTO.SolitaireDTO import SolitaireDTO
+from DTO.buildingTowerDTO import BuildingTowerDTO
+from DTO.cardDTO import CardDTO
 
 ### Constants ###
 
@@ -55,7 +58,7 @@ SUIT_WIDTH = 70
 SUIT_HEIGHT = 100
 
 RANK_DIFF_MAX = 2500
-SUIT_DIFF_MAX = 2500
+SUIT_DIFF_MAX = 2400
 
 CARD_MAX_AREA = 120000
 CARD_MIN_AREA = 25000
@@ -253,7 +256,7 @@ def preprocess_card(contour, image):
 
     # Warp card into 200x300 flattened image using perspective transform
     qCard.warp = flattener(image, pts, w, h)
-    cv2.imshow("r_warp", qCard.warp)
+    #cv2.imshow("r_warp", qCard.warp)
 
     # Grab corner of warped card image and do a 4x zoom
     Qcorner = qCard.warp[0:CORNER_HEIGHT, 0:CORNER_WIDTH]
@@ -270,9 +273,9 @@ def preprocess_card(contour, image):
 
     # Split in to top and bottom half (top shows rank, bottom shows suit)
     Qrank = query_thresh[rank_y_offset:rank_y_endpoint, rank_x_offset:rank_x_endpoint]
-    cv2.imshow("Qrank", Qrank)
+    #cv2.imshow("Qrank", Qrank)
     Qsuit = query_thresh[suit_y_offset:suit_y_endpoint, suit_x_offset:suit_x_endpoint]
-    cv2.imshow("QSuit", Qsuit)
+    #cv2.imshow("QSuit", Qsuit)
 
 
 
