@@ -26,8 +26,8 @@ def main():
             print_frame = frame[20:height, 650:width - 650]
             save_frame = frame[20:height, 650:width - 650]
 
-            image = cv2.resize(print_frame, (Cards.feed_width, Cards.feed_hight))
-            frame = cv2.resize(save_frame, (Cards.feed_width, Cards.feed_hight))
+            image = cv2.resize(print_frame, (Cards.feed_width, Cards.feed_height))
+            frame = cv2.resize(save_frame, (Cards.feed_width, Cards.feed_height))
 
             Cards.draw_board(frame)
             cv2.imshow("print frame", frame)

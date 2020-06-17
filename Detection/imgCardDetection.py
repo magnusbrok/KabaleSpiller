@@ -24,10 +24,10 @@ def main():
 
 
     print_img = cv2.imread(cardPath)
-    print_frame = imutils.resize(print_img, Cards.feed_width, Cards.feed_hight)
+    print_frame = imutils.resize(print_img, Cards.feed_width, Cards.feed_height)
 
     image = cv2.imread(cardPath, cv2.IMREAD_GRAYSCALE)
-    frame = imutils.resize(image, Cards.feed_width, Cards.feed_hight)
+    frame = imutils.resize(image, Cards.feed_width, Cards.feed_height)
 
     # cv2.imshow('frame-grayed', frame)
 

@@ -47,8 +47,8 @@ for Name in ['Ace','Two','Three','Four','Five','Six','Seven','Eight',
         print_frame = frame[20:int(height/2), 650*2:width - 650*2]
         save_frame = frame[20:int(height/2), 650*2:width - 650*2]
 
-        image = cv2.resize(print_frame, (Cards.feed_width, Cards.feed_hight))
-        frame = cv2.resize(save_frame, (Cards.feed_width, Cards.feed_hight))
+        image = cv2.resize(print_frame, (Cards.feed_width, Cards.feed_height))
+        frame = cv2.resize(save_frame, (Cards.feed_width, Cards.feed_height))
 
         cv2.imshow("Card",frame)
         key = cv2.waitKey(1) & 0xFF

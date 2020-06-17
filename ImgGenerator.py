@@ -21,8 +21,8 @@ while True:
     print_frame = frame[20:height, 650:width-650]
     save_frame = frame[20:height, 650:width-650]
 
-    print_frame = cv2.resize(print_frame, (Cards.feed_width, Cards.feed_hight))
-    save_frame = cv2.resize(save_frame, (Cards.feed_width, Cards.feed_hight))
+    print_frame = cv2.resize(print_frame, (Cards.feed_width, Cards.feed_height))
+    save_frame = cv2.resize(save_frame, (Cards.feed_width, Cards.feed_height))
 
 
 

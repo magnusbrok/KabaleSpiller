@@ -22,11 +22,11 @@ from DTO.cardDTO import CardDTO
 
 # Videofeed dimensions
 feed_width = 1600
-feed_hight = 1200
+feed_height = 1200
 # constrant used for defining sections of the gameboard
-top_section_h = int(feed_hight * 0.175)
+top_section_h = int(feed_height * 0.175)
 top_section_c_w = int(feed_width / 6)
-bot_section_h = feed_hight
+bot_section_h = feed_height
 bot_section_c_w = int(feed_width / 7)
 
 # Adaptive threshold levels
