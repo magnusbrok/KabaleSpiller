@@ -1,16 +1,12 @@
 import cv2
 import imutils
 import os
-
 import numpy as np
-from pip._vendor.distlib.compat import raw_input
 
 from Detection import Cards
 from DTO.SolitaireDTO import SolitaireDTO
 from DTO.buildingTowerDTO import BuildingTowerDTO
 from DTO.cardDTO import CardDTO
-from Socket import Client_socket
-
 
 def main():
 
@@ -18,9 +14,7 @@ def main():
     path = os.path.dirname(os.path.abspath(__file__))
     train_ranks = Cards.load_ranks(path + '/Card_Imgs/')
     train_suits = Cards.load_suits(path + '/Card_Imgs/')
-
     cap = cv2.VideoCapture(1)
-    #cap = cv2.VideoCapture('http://192.168.1.135:4905/video')
 
     while True:
         while True:
@@ -43,13 +37,11 @@ def main():
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         dilate = Cards.preprocess_imageOLD(gray)
-
         #cv2.imshow("dilate", dilate)
 
         sections = Cards.cutout_board_sections(dilate)
         print_sections = Cards.cutout_board_sections(frame)
         qcards = []
-        tower_card_array = []
         buildingTowerArray = []
         base_stack_array = []
         cards_found = 0
@@ -61,22 +53,8 @@ def main():
             printable_section = print_sections[i]
             contours, hierarchy = cv2.findContours(section, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-            #print(len(contours))
-
             if len(contours) != 0:
                 cnt = contours[0]
-
-                peri = cv2.arcLength(cnt, True)
-                approx = cv2.approxPolyDP(cnt, 0.01 * peri, True)
-                pts = np.float32(approx)
-                corner_pts = pts
-
-                # Find width and height of card's bounding rectangle
-                x, y, w, h = cv2.boundingRect(cnt)
-
-#                warp = Cards.flattener(printable_section, pts, w, h)
-
-                #   cv2.imshow(str(i)+"warp", warp)
 
                 gray_section = cv2.cvtColor(printable_section, cv2.COLOR_BGR2GRAY)
                 # cv2.imshow(str(i)+ "gray", gray_section)
@@ -90,8 +68,6 @@ def main():
                     qcards[cards_found], train_ranks, train_suits)
 
                 cardDTO = CardDTO(value=qcards[cards_found].best_rank_match, suit=qcards[cards_found].best_suit_match)
-
-
 
                 if i == 1:
                     currentCard = cardDTO
