@@ -210,10 +210,12 @@ def preprocess_card(contour, image):
     cent_y = int(average[0][1])
     qCard.center = [cent_x, cent_y]
 
-    # Warp card into 200x300 flattened image using perspective transform
-    qCard.warp = flattener(image, pts, w, h)
-    #cv2.imshow("r_warp", qCard.warp)
-
+    try:
+        # Warp card into 200x300 flattened image using perspective transform
+        qCard.warp = flattener(image, pts, w, h)
+        #cv2.imshow("r_warp", qCard.warp)
+    except:
+        return qCard
     # Grab corner of warped card image and do a 4x zoom
     Qcorner = qCard.warp[0:CORNER_HEIGHT, 0:CORNER_WIDTH]
     Qcorner_zoom = cv2.resize(Qcorner, (0, 0), fx=4, fy=4)

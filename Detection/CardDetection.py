@@ -143,16 +143,15 @@ def main():
         print(tower_string)
 
         print()
-
-        input_char = input("Was the scan correct? [Y/N]")
-        input_char = input_char.lower()
-        if input_char == "y":
-            Cards.send_game(solitaire)
-        if input_char == "n":
-            print("Tryk p for at tage et nyt billedet")
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        print("Was the scan correct? [y/n]")
+        k = cv2.waitKey(0)
+        if k == ord('q'):
             break
+        if k == ord('y'):
+            Cards.send_game(solitaire)
+        if k == ord('n'):
+            print("Press p to take new picture")
+
 
     cap.release()
     cv2.destroyAllWindows()
