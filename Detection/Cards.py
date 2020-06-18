@@ -164,7 +164,7 @@ def preprocess_imageOLD(image):
 
     # gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
     gray = image
-    blur = cv2.GaussianBlur(gray, (7, 7), 0)
+    blur = cv2.GaussianBlur(gray, (9, 9), 0)
 
     # The best threshold level depends on the ambient lighting conditions.
     # For bright lighting, a high threshold must be used to isolate the cards
@@ -180,6 +180,8 @@ def preprocess_imageOLD(image):
     thresh_level = bkg_level + BKG_THRESH
 
     retval, thresh = cv2.threshold(blur, 160, 255, cv2.THRESH_BINARY)
+    #thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                            #   cv2.THRESH_BINARY, 11, 2)
 
     return thresh
 
@@ -192,7 +194,7 @@ def preprocess_card(contour, image):
 
     qCard.contour = contour
 
-    cv2.imshow("recieved img", image)
+    #cv2.imshow("recieved img", image)
 
     # Find perimeter of card and use it to approximate corner points
     peri = cv2.arcLength(contour, True)
@@ -249,7 +251,7 @@ def preprocess_card(contour, image):
         Qrank_roi = Qrank[y1:y1 + h1, x1:x1 + w1]
         Qrank_sized = cv2.resize(Qrank_roi, (RANK_WIDTH, RANK_HEIGHT), 0, 0)
         qCard.rank_img = Qrank_sized
-        cv2.imshow("rankfound", Qrank_sized)
+        #cv2.imshow("rankfound", Qrank_sized)
 
     # Find suit contour and bounding rectangle, isolate and find largest contour
     Qsuit_cnts, hier = cv2.findContours(Qsuit, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -262,7 +264,7 @@ def preprocess_card(contour, image):
         Qsuit_roi = Qsuit[y2:y2 + h2, x2:x2 + w2]
         Qsuit_sized = cv2.resize(Qsuit_roi, (SUIT_WIDTH, SUIT_HEIGHT), 0, 0)
         qCard.suit_img = Qsuit_sized
-        cv2.imshow("suitfound", Qsuit_sized)
+        #cv2.imshow("suitfound", Qsuit_sized)
 
     return qCard
 

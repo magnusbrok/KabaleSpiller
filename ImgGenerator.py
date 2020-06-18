@@ -32,6 +32,7 @@ while True:
         break
 
     Cards.draw_board(print_frame)
+    Cards.draw_board(save_frame)
     cv2.imshow("test", print_frame)
 
     k = cv2.waitKey(1)

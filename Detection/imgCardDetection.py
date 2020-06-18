@@ -18,7 +18,7 @@ def main():
     train_suits = Cards.load_suits(path + '/Card_Imgs/')
 
     cardPath = 'Training-Imgs/kabale_1.jpg'
-    cardPath = 'Training-Imgs/opencv_frame_0.png'
+    cardPath = 'Training-Imgs/start_WB.png'
 
 
 
