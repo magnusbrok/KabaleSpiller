@@ -2,7 +2,7 @@ import socket
 
 # Kilde: https://pythonprogramming.net/pickle-objects-sockets-tutorial-python-3/'
 # https://stackoverflow.com/questions/4185242/communication-between-python-client-and-java-server
-
+# Siff ravn and Filip Brix Jensen
 class Socket:
     def __init__(self, host, port):
         self.host = host

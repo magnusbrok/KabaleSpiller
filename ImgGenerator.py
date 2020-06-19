@@ -1,13 +1,10 @@
 import cv2
 from Detection import Cards
 
+# Author Magnus Brok
+# Simple script to create test Images based on the same quality as webcam feed.
 cap = cv2.VideoCapture(1)
-
-
 cv2.namedWindow("test")
-#cam = cv2.VideoCapture('http://192.168.1.135:4905/video')
-
-
 
 img_counter = 0
 
@@ -23,9 +20,6 @@ while True:
 
     print_frame = cv2.resize(print_frame, (Cards.feed_width, Cards.feed_height))
     save_frame = cv2.resize(save_frame, (Cards.feed_width, Cards.feed_height))
-
-
-
 
     if not ret:
         print("failed to grab frame")
@@ -48,5 +42,4 @@ while True:
         img_counter += 1
 
 cap.release()
-
 cv2.destroyAllWindows()
