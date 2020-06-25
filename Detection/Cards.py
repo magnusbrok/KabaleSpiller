@@ -1,29 +1,26 @@
 ############## Playing Card Detector Functions ###############
 #
-# Author: Evan Juras
+# Original Author: Evan Juras
 # Date: 9/5/17
-# Description: Functions and classes for CardDetector.py that perform 
+# Edited by Magnus Brok and Anders Brandt 26/06/20
+# Description: Functions and classes for CardDetection.py that perform
 # various steps of the card detection algorithm
+#
 
 
 # Import necessary packages
 import json
-
 import imutils
 import numpy as np
 import cv2
 from Socket.Client_socket import Socket
 from DTO.SolitaireDTO import SolitaireEncoder
-from DTO.SolitaireDTO import SolitaireDTO
-from DTO.buildingTowerDTO import BuildingTowerDTO
-from DTO.cardDTO import CardDTO
-
 ### Constants ###
 
 # Videofeed dimensions
 feed_width = 1600
 feed_height = 1200
-# constrant used for defining sections of the gameboard
+# constants used for defining sections of the gameboard
 top_section_h = int(feed_height * 0.175)
 top_section_c_w = int(feed_width / 6)
 bot_section_h = feed_height
@@ -65,7 +62,6 @@ CARD_MIN_AREA = 25000
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-
 def preprocces_image(image):
     # cv2.imshow('Card class recieved image', image)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -86,7 +82,7 @@ def preprocces_image(image):
 
 
 ### Structures to hold query card and train card information ###
-
+# Author: Evan Juras
 class Query_card:
     """Structure to store information about query cards in the camera image."""
 
@@ -105,7 +101,7 @@ class Query_card:
         self.rank_diff = 0  # Difference between rank image and best matched train rank image
         self.suit_diff = 0  # Difference between suit image and best matched train suit image
 
-
+# Author: Evan Juras
 class Train_ranks:
     """Structure to store information about train rank images."""
 
@@ -113,7 +109,7 @@ class Train_ranks:
         self.img = []  # Thresholded, sized rank image loaded from hard drive
         self.name = "Placeholder"
 
-
+# Author: Evan Juras
 class Train_suits:
     """Structure to store information about train suit images."""
 
@@ -123,6 +119,7 @@ class Train_suits:
 
 
 ### Functions ###
+# Author: Evan Juras
 def load_ranks(filepath):
     """Loads rank images from directory specified by filepath. Stores
     them in a list of Train_ranks objects."""
@@ -141,7 +138,7 @@ def load_ranks(filepath):
 
     return train_ranks
 
-
+# Author: Evan Juras
 def load_suits(filepath):
     """Loads suit images from directory specified by filepath. Stores
     them in a list of Train_suits objects."""
@@ -158,7 +155,7 @@ def load_suits(filepath):
 
     return train_suits
 
-
+# Author: Evan Juras
 def preprocess_imageOLD(image):
     """Returns a grayed, blurred, and adaptively thresholded camera image."""
 
@@ -184,7 +181,7 @@ def preprocess_imageOLD(image):
                             #   cv2.THRESH_BINARY, 11, 2)
 
     return thresh
-
+# Author: Evan Juras
 def preprocess_card(contour, image):
     """Uses contour to find information about the query card. Isolates rank
     and suit images from the card."""
@@ -229,16 +226,11 @@ def preprocess_card(contour, image):
         thresh_level = 1
     retval, query_thresh = cv2.threshold(Qcorner_zoom, thresh_level, 255, cv2.THRESH_BINARY_INV)
 
-
-
     # Split in to top and bottom half (top shows rank, bottom shows suit)
     Qrank = query_thresh[rank_y_offset:rank_y_endpoint, rank_x_offset:rank_x_endpoint]
     #cv2.imshow("Qrank", Qrank)
     Qsuit = query_thresh[suit_y_offset:suit_y_endpoint, suit_x_offset:suit_x_endpoint]
     #cv2.imshow("QSuit", Qsuit)
-
-
-
 
     # Find rank contour and bounding rectangle, isolate and find largest contour
     Qrank_cnts, hier = cv2.findContours(Qrank, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -268,7 +260,7 @@ def preprocess_card(contour, image):
 
     return qCard
 
-
+# Author: Evan Juras
 def match_card(qCard, train_ranks, train_suits):
     """Finds best rank and suit matches for the query card. Differences
     the query card rank and suit images with the train rank and suit images.
@@ -320,7 +312,7 @@ def match_card(qCard, train_ranks, train_suits):
     # Return the identiy of the card and the quality of the suit and rank match
     return best_rank_match_name, best_suit_match_name, best_rank_match_diff, best_suit_match_diff
 
-
+# Author: Evan Juras
 def flattener(image, pts, w, h):
     """Flattens an image of a card into a top-down 200x300 perspective.
     Returns the flattened, re-sized, grayed image.
@@ -388,7 +380,7 @@ def flattener(image, pts, w, h):
     # warp = cv2.cvtColor(warp,cv2.COLOR_BGR2GRAY)
 
     return warp
-
+# Author: Magnus Brok
 def draw_board(frame):
     # Top of the board
     cv2.line(frame, (0, top_section_h), (feed_width, top_section_h), (255, 0, 0), 3)
@@ -400,7 +392,7 @@ def draw_board(frame):
     for x in range(1, 8):
         cv2.line(frame, (bot_section_c_w * x, top_section_h), (bot_section_c_w * x, bot_section_h), (255, 0, 0), 3)
 
-
+# Author: Magnus Brok
 def cutout_board_sections(frame):
     sections = []
     section_number = 1
@@ -419,7 +411,7 @@ def cutout_board_sections(frame):
 
     return sections
 
-
+# Author: Anders Brandt
 def send_game(solitaire):
     data = json.dumps(solitaire, cls=SolitaireEncoder)
     socket = Socket("localhost", 8080)

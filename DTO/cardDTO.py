@@ -4,7 +4,7 @@ from json import JSONEncoder
 
 # https://pynative.com/make-python-class-json-serializable/
 
-
+# Author Siff Ravn
 class CardDTO:
     def __init__(self, suit, value):
         self.suit = suit

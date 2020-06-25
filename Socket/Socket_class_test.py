@@ -5,7 +5,7 @@ from DTO.buildingTowerDTO import BuildingTowerDTO
 from DTO.cardDTO import CardDTO
 from DTO.SolitaireDTO import SolitaireDTO, SolitaireEncoder
 
-
+# Author Siff Ravn
 data_socket = Socket('localhost', 8080)
 
 buildingTower1 = BuildingTowerDTO(False, [CardDTO('C', 5)])

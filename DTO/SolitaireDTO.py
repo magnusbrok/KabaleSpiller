@@ -1,6 +1,6 @@
 from json import JSONEncoder
 
-
+# Filip Brix Jensen
 class SolitaireDTO:
     def __init__(self, currentCard, towers, baseStack):
         self.currentCard = currentCard

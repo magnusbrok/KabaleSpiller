@@ -1,13 +1,13 @@
 import cv2
-import imutils
 import os
-import numpy as np
 
 from Detection import Cards
 from DTO.SolitaireDTO import SolitaireDTO
 from DTO.buildingTowerDTO import BuildingTowerDTO
 from DTO.cardDTO import CardDTO
 
+#Author Magnus Brok and Anders Brandt
+# Main script to handle solitaire game detection
 def main():
 
     # Load the train rank and suit images

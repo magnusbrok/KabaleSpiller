@@ -9,7 +9,9 @@ from DTO.cardDTO import CardDTO
 
 section_names = ["drawStack", "lastDraw", "1. Base stack", "2. base stack", "3. Base stack", "4. Base stack",
                  "1. tower", "2. tower", "3. tower", "4. tower", "5. tower", "6. tower", "7. tower"]
-
+# Author Magnus Brok and Anders Brandt
+# Mainly used during devolopment to test carddetection without webcam but instead
+# with precaptured images
 def main():
 
     # Load the train rank and suit images
@@ -19,9 +21,6 @@ def main():
 
     cardPath = 'Training-Imgs/kabale_1.jpg'
     cardPath = 'Training-Imgs/start_WB.png'
-
-
-
 
     print_img = cv2.imread(cardPath)
     print_frame = imutils.resize(print_img, Cards.feed_width, Cards.feed_height)
@@ -93,8 +92,6 @@ def main():
                 cv2.imshow(str(section_counter)+ "card suit", found_card.suit_img)
             except:
                 print("no card found")
-
-
 
             section_counter += 1
             cards_found += 1
